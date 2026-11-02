@@ -54,6 +54,24 @@ export function categorise({ title, slug = '' }, overrides = {}) {
   return 'General'
 }
 
+// What kind of post it is, read from the words anywhere in the title, so a post only needs a clear title
+// ("... a literature review", "MythBuster: ..."), not one exact opening. Every post is published either way;
+// the kind only decides the label it carries and whether it also shows on the Papers page.
+// To set a kind yourself, add  "the-end-of-the-post-link": "Literature review"  to data/categories.json.
+export const KINDS = [
+  ['Literature review', /\b(literature review|systematic review|review of the literature|research paper)\b/i],
+  ['MythBuster', /\bmyth ?busters?\b|\bmyth of the week\b/i],
+  ['Interview', /^interview\b|\binterview with\b/i],
+  ['Case of the month', /\bcase of the month\b/i],
+  ['Guest post', /^guest post\b/i],
+]
+const KIND_NAMES = KINDS.map(([name]) => name)
+export function detectKind(title, slug = '', overrides = {}) {
+  if (KIND_NAMES.includes(overrides[slug])) return overrides[slug]
+  const hit = KINDS.find(([, re]) => re.test(title))
+  return hit ? hit[0] : ''
+}
+
 export function parseFeed(xml, overrides = {}) {
   const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1])
   return items
@@ -66,8 +84,11 @@ export function parseFeed(xml, overrides = {}) {
       const slug = slugOf(url)
       const when = new Date(field(it, 'pubDate'))
       if (!title || !url || Number.isNaN(when.getTime())) return null
-      const article = { title, url, date: when.toISOString().slice(0, 10), author: detectAuthor(opening), category: categorise({ title, slug }, overrides) }
-      if (/^literature review\b/i.test(title)) article.kind = 'Literature review'
+      // a pinned kind (in categories.json) is not a category, so it must not be taken for one
+      const pinnedCategory = KIND_NAMES.includes(overrides[slug]) ? {} : overrides
+      const article = { title, url, date: when.toISOString().slice(0, 10), author: detectAuthor(opening), category: categorise({ title, slug }, pinnedCategory) }
+      const kind = detectKind(title, slug, overrides)
+      if (kind) article.kind = kind
       return article
     })
     .filter(Boolean)

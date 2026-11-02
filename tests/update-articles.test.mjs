@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
-import { parseFeed, detectAuthor, categorise, slugOf, render } from '../tools/update-articles.mjs'
+import { parseFeed, detectAuthor, categorise, slugOf, render, detectKind } from '../tools/update-articles.mjs'
 
 // A small feed shaped exactly like Substack's: the author is only named in the opening line.
 const item = (title, slug, date, byline, extra = '') => `<item>
@@ -74,4 +74,25 @@ test('the site\'s current articles file is valid, linked to Substack, and has no
     assert.ok(['Neurology', 'Cardiology', 'Psychology', 'General'].includes(a.category), a.title)
   }
   assert.equal(new Set(articles.map((a) => a.url)).size, articles.length)
+})
+
+test('recognises the kind of post from words anywhere in the title, so no exact prefix is needed', () => {
+  assert.equal(detectKind('Why false memories happen: a literature review'), 'Literature review')
+  assert.equal(detectKind('Sleep and memory (research paper)'), 'Literature review')
+  assert.equal(detectKind('MythBuster: you only use 10 percent of your brain'), 'MythBuster')
+  assert.equal(detectKind('Interview with a neurologist'), 'Interview')
+  assert.equal(detectKind('Case of the month: Phineas Gage'), 'Case of the month')
+  assert.equal(detectKind('What stress does to your brain'), '')
+})
+
+test('a post with a plain title is still published, just without a kind', () => {
+  const list = parseFeed(FEED)
+  const plain = list.find((a) => a.url.endsWith('what-stress'))
+  assert.ok(plain && plain.title && plain.url && !('kind' in plain))
+})
+
+test('a kind can be pinned by hand for one post, and it is not mistaken for a category', () => {
+  const pinned = parseFeed(FEED, { 'what-stress': 'Literature review' }).find((a) => a.url.endsWith('what-stress'))
+  assert.equal(pinned.kind, 'Literature review')
+  assert.equal(pinned.category, 'Neurology')
 })

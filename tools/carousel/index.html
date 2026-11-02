@@ -40,6 +40,9 @@
     .warn { background: var(--warn-bg); color: var(--warn-ink); padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.93rem; margin: 0 0 1rem; max-width: none; }
     .tools { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.4rem; }
     .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+    .stack { display: grid; gap: 1.1rem; }
+    #web-part[hidden], #image-part[hidden], #web-out[hidden], #img-out[hidden] { display: none; }
+    .webcode { width: 100%; min-height: 22rem; font: 0.86rem/1.55 ui-monospace, Consolas, "Courier New", monospace; white-space: pre; overflow: auto; background: var(--paper-2); color: var(--ink); border: 1.5px solid var(--line); border-radius: 8px; padding: 1rem; }
     .gate { padding-block: 4rem 6rem; }
     .gate[hidden], #main[hidden] { display: none; }
     .gate form { display: grid; gap: 1.1rem; max-width: 24rem; }
@@ -66,6 +69,12 @@
         <h1>Carousel maker</h1>
         <p class="muted" style="margin:0">You write the words. This lays them out as branded Instagram posts. Nothing is uploaded: it all stays in this browser.</p>
       </div>
+      <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">What are you making?</legend>
+        <div class="chips" id="areas">
+          <label><input type="radio" name="area" value="images" checked> Instagram images</label>
+          <label><input type="radio" name="area" value="website"> Website entries</label>
+        </div></fieldset>
+      <div id="image-part" class="stack">
       <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">What are you posting?</legend>
         <div class="chips" id="types">
           <label><input type="radio" name="type" value="article" checked> Article</label>
@@ -83,9 +92,26 @@
           <label><input type="radio" name="theme" value="forest"> Forest</label>
         </div></fieldset>
       <button type="button" class="btn btn-line" id="clear">Clear this form</button>
+      </div>
+      <div id="web-part" class="stack" hidden>
+        <p class="muted" style="margin:0">Fill in a form and this writes the exact text to put on the website. You write every word; nothing is sent anywhere from this page.</p>
+        <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">Which part of the website?</legend>
+          <div class="chips" id="wtypes"></div></fieldset>
+        <div id="wforms" style="display:grid;gap:1.1rem"></div>
+        <button type="button" class="btn btn-line" id="wclear">Clear this form</button>
+      </div>
     </form>
 
-    <section aria-label="Your slides">
+    <section id="web-out" aria-label="Text for the website" hidden>
+      <div id="wwarn" class="warn" role="status" hidden></div>
+      <h2 style="margin:0 0 .4rem" id="wtitle"></h2>
+      <ol id="wsteps" class="list" style="margin:0 0 1rem"></ol>
+      <div class="tools"><button class="btn btn-primary" type="button" id="wcopy" disabled>Copy the text</button><a class="btn btn-line" id="wopen" href="#" target="_blank" rel="noopener">Open the file on GitHub</a><span class="note" id="wnote" role="status"></span></div>
+      <label for="wcode" class="sr-only">Text to paste into the website</label>
+      <textarea id="wcode" class="webcode" readonly spellcheck="false"></textarea>
+    </section>
+
+    <section id="img-out" aria-label="Your slides">
       <div id="warn" class="warn" role="status" hidden></div>
       <div class="tools"><button class="btn btn-primary" type="button" id="all" disabled>Download all slides</button><span class="note" id="count"></span></div>
       <div class="deck" id="deck"></div>
@@ -624,6 +650,149 @@
   var ask = fonts && fonts.load ? Promise.all([fonts.load('400 80px Newsreader'), fonts.load('500 40px Newsreader'), fonts.load('400 40px "Instrument Sans"'), fonts.load('500 40px "Instrument Sans"'), fonts.load('600 40px "Instrument Sans"')]).catch(function () {}) : Promise.resolve()
   ask.then(render)
   if (fonts && fonts.addEventListener) fonts.addEventListener('loadingdone', render)
+})()
+</script>
+<script>
+/* Website entries: turns a filled-in form into the exact text to paste into one of the site's files.
+   Nothing is uploaded from this page. Putting it on the site happens on GitHub, where only the HealthBridge
+   account can save changes, so this page never holds a password or a token. */
+(function () {
+  'use strict'
+  var EDIT = 'https://github.com/projecthealthbridge/website/edit/main/'
+  var $ = function (id) { return document.getElementById(id) }
+  var form = $('form'), wforms = $('wforms'), wtypes = $('wtypes')
+  var today = new Date(); var iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0')
+  var js = function (s) { return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\s*\n\s*/g, ' ').trim() + "'" }
+  var html = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim() }
+  var LETTERS = ['A', 'B', 'C', 'D']
+  var OPTS = [{ name: 'a', label: 'Option A', kind: 'text' }, { name: 'b', label: 'Option B', kind: 'text' }, { name: 'c', label: 'Option C', kind: 'text' }, { name: 'd', label: 'Option D', kind: 'text' }, { name: 'ans', label: 'The correct answer', kind: 'select', options: LETTERS }]
+  // the filled options in order, and where the right answer sits among them (counting from 0), as the site wants it
+  function choices(v) {
+    var all = [v.a, v.b, v.c, v.d], idx = LETTERS.indexOf(v.ans), list = [], at = -1
+    all.forEach(function (o, i) { if (o) { if (i === idx) at = list.length; list.push(o) } })
+    return { list: list, at: at }
+  }
+
+  var WEB = {
+    weekly: {
+      label: 'Weekly entry', file: 'data/weekly.js',
+      steps: ['Copy the text.', 'Open data/weekly.js on GitHub (the button) and log in as the HealthBridge account.', 'Paste it on a new line straight after "entries: [". The newest entry goes first.', 'Click "Commit changes". The Weekly page updates in about a minute.'],
+      fields: [
+        { name: 'date', label: 'Date it was posted (year-month-day)', kind: 'text', def: iso, max: 10 },
+        { name: 'title', label: 'Title', kind: 'text', def: 'Brain Myth of the Week: ', max: 120 },
+        { name: 'claim', label: 'The myth, as people usually say it', kind: 'area', short: true },
+        { name: 'verdict', label: 'Verdict', kind: 'select', options: ['Myth', 'Fact', 'Partly true'] },
+        { name: 'explanation', label: 'What the research shows', kind: 'area' },
+        { name: 's1l', label: 'Source 1: author, year, title', kind: 'text' }, { name: 's1u', label: 'Source 1: link (https://...)', kind: 'text' },
+        { name: 's2l', label: 'Source 2: author, year, title', kind: 'text' }, { name: 's2u', label: 'Source 2: link (https://...)', kind: 'text' },
+        { name: 'q', label: 'Quiz question for this week (optional)', kind: 'area', short: true },
+      ].concat(OPTS),
+      build: function (v, n) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(v.date)) n.push('Write the date as year-month-day, for example 2026-11-09.')
+        var src = [[v.s1l, v.s1u], [v.s2l, v.s2u]].filter(function (s) { return s[0] || s[1] })
+        if (src.some(function (s) { return !s[0] || !/^https?:\/\//.test(s[1]) })) n.push('Each source needs a name and a full link that starts with https://.')
+        else if (src.length < 2) n.push('A MythBuster needs two sources you have checked yourself. You have ' + src.length + '.')
+        var out = ['    {', '      date: ' + js(v.date) + ',', '      title: ' + js(v.title) + ',', '      claim: ' + js(v.claim) + ',', '      verdict: ' + js(v.verdict) + ',', '      explanation: ' + js(v.explanation) + ',']
+        out.push('      sources: [')
+        src.forEach(function (s) { out.push('        { label: ' + js(s[0]) + ', url: ' + js(s[1]) + ' },') })
+        out.push('      ],')
+        var c = choices(v)
+        if (v.q) {
+          if (c.list.length < 2) n.push('The quiz question needs at least two options.')
+          else if (c.at < 0) n.push('The correct answer ' + v.ans + ' is empty. Pick an option that has text.')
+          else out.push('      quiz: [ { q: ' + js(v.q) + ', options: [' + c.list.map(js).join(', ') + '], answer: ' + c.at + ' } ],')
+        }
+        out.push('    },')
+        return { text: out.join('\n'), ready: !!(v.title.trim() && v.claim && v.explanation && /^\d{4}-\d{2}-\d{2}$/.test(v.date) && src.length >= 1 && !n.length) }
+      },
+    },
+    quiz: {
+      label: 'Quiz question', file: 'js/data.js',
+      steps: ['Copy the text.', 'Open js/data.js on GitHub (the button) and log in as the HealthBridge account.', 'Paste it on its own line after the last question in the QUIZ list, before the line with just "]".', 'Click "Commit changes". The Quiz page picks it up in about a minute.'],
+      fields: [
+        { name: 'topic', label: 'Topic', kind: 'select', options: ['Neurology', 'Cardiology', 'Psychology'] },
+        { name: 'level', label: 'Level', kind: 'select', options: ['easy', 'medium', 'hard'] },
+        { name: 'q', label: 'The question', kind: 'area', short: true },
+      ].concat(OPTS),
+      build: function (v, n) {
+        var c = choices(v)
+        if (v.q && c.list.length < 2) n.push('The question needs at least two options.')
+        else if (v.q && c.at < 0) n.push('The correct answer ' + v.ans + ' is empty. Pick an option that has text.')
+        return { text: '    { topic: ' + js(v.topic) + ', level: ' + js(v.level) + ', q: ' + js(v.q) + ', options: [' + c.list.map(js).join(', ') + '], answer: ' + Math.max(c.at, 0) + ' },', ready: !!v.q && c.list.length >= 2 && c.at >= 0 }
+      },
+    },
+    experiment: {
+      label: 'Experiment result', file: 'experiments.html',
+      steps: ['Copy the text.', 'Open experiments.html on GitHub (the button) and log in as the HealthBridge account.', 'Paste it on a new line just above the line that starts with <div class="prose">. If the grey "Where we are" box still says no experiment has run, edit it too.', 'Click "Commit changes". The Experiments page updates in about a minute.'],
+      fields: [
+        { name: 'title', label: 'Name of the experiment', kind: 'text', max: 100 },
+        { name: 'status', label: 'Status label', kind: 'text', def: 'Result', max: 60 },
+        { name: 'ask', label: 'What we asked', kind: 'area', short: true },
+        { name: 'method', label: 'Method', kind: 'area' },
+        { name: 'results', label: 'Results, including anything that did not work', kind: 'area' },
+        { name: 'limits', label: 'What this cannot tell us', kind: 'area', short: true },
+        { name: 'consent', label: 'Consent and safety', kind: 'area', short: true, help: 'Who took part, that they or a parent agreed, that the data is anonymous.' },
+      ],
+      build: function (v, n) {
+        if (v.title && !v.consent) n.push('Say how consent and safety were handled. Your experiment rules ask for it.')
+        if (v.title && !v.limits) n.push('Add what the experiment cannot tell us.')
+        var p = function (label, t) { return t ? '      <p><strong>' + label + '</strong> ' + html(t) + '</p>' : '' }
+        var out = ['  <article class="concept">', '    <div><h2>' + html(v.title) + '</h2><span class="status">' + html(v.status) + '</span></div>', '    <div>', p('What we asked.', v.ask), p('Method.', v.method), p('Results.', v.results), v.limits ? '      <p class="muted">' + html(v.limits) + '</p>' : '', v.consent ? '      <p class="muted">' + html(v.consent) + '</p>' : '', '    </div>', '  </article>']
+        return { text: out.filter(Boolean).join('\n'), ready: !!(v.title && v.method && v.results) }
+      },
+    },
+  }
+
+  function el(tag, attrs, text) { var n = document.createElement(tag); Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]) }); if (text) n.textContent = text; return n }
+  var fid = function (t, n) { return 'w-' + t + '-' + n }
+  Object.keys(WEB).forEach(function (type, i) {
+    var cfg = WEB[type]
+    var chip = el('label'); var r = el('input', { type: 'radio', name: 'wtype', value: type }); if (!i) r.checked = true
+    chip.appendChild(r); chip.appendChild(document.createTextNode(' ' + cfg.label)); wtypes.appendChild(chip)
+    var box = el('div', { class: 'type-form', 'data-wtype': type }); box.hidden = !!i
+    cfg.fields.forEach(function (f) {
+      var row = el('div'); row.appendChild(el('label', { for: fid(type, f.name) }, f.label))
+      var c
+      if (f.kind === 'area') { c = el('textarea', { id: fid(type, f.name) }); if (f.short) c.className = 'short' }
+      else if (f.kind === 'select') { c = el('select', { id: fid(type, f.name), class: 'select' }); f.options.forEach(function (o) { c.appendChild(el('option', { value: o }, o)) }) }
+      else { c = el('input', { id: fid(type, f.name), type: 'text' }); if (f.max) c.maxLength = f.max }
+      if (f.def !== undefined) c.value = f.def
+      row.appendChild(c); if (f.help) row.appendChild(el('p', { class: 'note', style: 'margin:.4rem 0 0' }, f.help))
+      box.appendChild(row)
+    })
+    wforms.appendChild(box)
+  })
+
+  var cur = function () { return (form.querySelector('input[name=wtype]:checked') || {}).value || 'weekly' }
+  function read(type) { var v = {}; WEB[type].fields.forEach(function (f) { var c = $(fid(type, f.name)); v[f.name] = c ? (f.kind === 'select' ? c.value : c.value.trim()) : '' }); return v }
+  function update() {
+    var type = cur(), cfg = WEB[type], notes = []
+    Array.prototype.forEach.call(wforms.children, function (b) { b.hidden = b.getAttribute('data-wtype') !== type })
+    var res = cfg.build(read(type), notes)
+    $('wtitle').textContent = cfg.label + ': text for ' + cfg.file
+    var steps = $('wsteps'); steps.textContent = ''; cfg.steps.forEach(function (s) { steps.appendChild(el('li', {}, s)) })
+    $('wcode').value = res.text
+    $('wopen').href = EDIT + cfg.file; $('wopen').textContent = 'Open ' + cfg.file + ' on GitHub'
+    $('wcopy').disabled = !res.ready
+    $('wnote').textContent = res.ready ? '' : 'Fill in the main fields to copy.'
+    $('wwarn').hidden = !notes.length; $('wwarn').textContent = notes.join(' ')
+  }
+  function setArea() {
+    var web = (form.querySelector('input[name=area]:checked') || {}).value === 'website'
+    $('image-part').hidden = web; $('img-out').hidden = web; $('web-part').hidden = !web; $('web-out').hidden = !web
+    if (web) update()
+  }
+  $('wcopy').addEventListener('click', function () {
+    var box = $('wcode'), done = function () { $('wnote').textContent = 'Copied. Now paste it into the file on GitHub.' }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(box.value).then(done, function () { box.select(); document.execCommand('copy'); done() })
+    else { box.select(); document.execCommand('copy'); done() }
+  })
+  $('wclear').addEventListener('click', function () {
+    var type = cur(); WEB[type].fields.forEach(function (f) { var c = $(fid(type, f.name)); if (c) c.value = f.def !== undefined ? f.def : f.kind === 'select' ? f.options[0] : '' }); update()
+  })
+  form.addEventListener('input', function (e) { if (e.target && /^w-/.test(e.target.id || '')) update() })
+  form.addEventListener('change', function (e) { if (e.target && (e.target.name === 'wtype' || e.target.name === 'area')) { setArea(); update() } })
+  setArea()
 })()
 </script>
 </body>

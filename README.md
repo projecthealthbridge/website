@@ -83,6 +83,7 @@ Linked from the footer of every page ("Carousel maker"). It asks for a 5-digit c
 - **Article**: cover, one idea per slide (blank line between slides), last slide pointing to the article. 1080 x 1350.
 - **Experiment**: the question, who took part, what you expected, method (one step per line), results, conclusion and what it cannot tell us. The cover says it is a student experiment and not medical advice.
 - **MythBuster**: the myth, a verdict (Myth, Partly true, True, Not proven), what the evidence shows, two sources, one thing to remember. It warns if you give fewer than two sources.
+- **Website entries** (the other choice at the top): forms for a Weekly entry, a Quiz question and an Experiment result. They write the exact text to paste into `data/weekly.js`, `js/data.js` or `experiments.html`, with a button that opens that file in GitHub's editor. Only the HealthBridge account can save changes there; this page never holds a password or token.
 - **Quiz (Story)**: Instagram Story frames, 1080 x 1920, with the top and bottom kept clear of Instagram's own buttons. Add up to 5 questions with four options, the right answer and a reason; make the question frames on Friday and the answer frames on Saturday.
 - **Podcast**: cover with a sound wave, what the episode is about, takeaways and where to listen.
 
@@ -113,3 +114,11 @@ The founders section shows each founder's field (a line drawing in the arch), th
 ## Join us on Substack
 
 The join buttons go to Substack's plain email box (`subscribe?simple=true`), which has no plan or payment screens. The publication has payments switched off in Substack, so there is no paid tier; to keep it that way, do not turn on paid subscriptions in Substack's settings.
+
+## Which Substack posts show up where
+
+Every post on the Substack feed is published to the Articles page automatically (every 6 hours), whatever its title. The title only decides an extra label, read from words anywhere in it: *literature review*, *systematic review*, *research paper* (also shown on the Papers page); *MythBuster* / *Myth of the Week*; *Interview with ...*; *Case of the month*; *Guest post ...*. To set the label yourself for one post, add `"the-end-of-the-post-link": "Literature review"` to `data/categories.json`.
+
+## Who can publish
+
+This folder's Git remote is `https://projecthealthbridge@github.com/projecthealthbridge/website.git` and Git is set to use only the `projecthealthbridge` login for github.com here. GitHub itself decides who can change the repository: keep it that way by not adding collaborators.
