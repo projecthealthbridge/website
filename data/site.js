@@ -9,5 +9,5 @@
    It never runs on your own computer (localhost), never runs when a visitor has "Do Not Track" on, and
    when it is on, the footer says so. Leave it empty to count nothing. */
 window.HB_SITE = {
-  goatcounter: '',
+  goatcounter: 'projecthealthbridge',
 }
