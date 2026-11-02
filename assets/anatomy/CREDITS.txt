@@ -1,0 +1,14 @@
+3D models of the brain and heart
+=================================
+Source: BodyParts3D, (c) The Database Center for Life Science, licensed under CC Attribution-Share Alike 2.1 Japan.
+https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+
+(The database's licence page now names CC Attribution 4.0; the downloaded files are stamped Share-Alike 2.1 Japan.
+We follow the stricter one.)
+
+Changes made to the original data: parts were merged, trimmed to the area around the heart where needed,
+smoothed, moved to one coordinate system, recoloured and stored in a compact format. The amygdala is a simplified
+almond shape placed at the front of the hippocampus, because BodyParts3D has no amygdala mesh.
+
+These adapted files (brain.bin, brain.json, heart.bin, heart.json) are shared under the same licence,
+Creative Commons Attribution-Share Alike (https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en).

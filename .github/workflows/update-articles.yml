@@ -1,0 +1,38 @@
+name: Update articles from Substack
+
+# Reads the Substack feed every 6 hours and refreshes data/articles.js, so a new post shows up on
+# the site by itself. You can also run it by hand: Actions tab > this workflow > Run workflow.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read the Substack feed
+        run: node tools/update-articles.mjs
+      - name: Save and publish if there is something new
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$(git status --porcelain data/articles.js)" ]; then
+            git config user.name "healthbridge-bot"
+            git config user.email "healthbridge-bot@users.noreply.github.com"
+            git add data/articles.js
+            git commit -m "Update articles from Substack"
+            git push
+            # Ask GitHub Pages to rebuild straight away (harmless if it already is).
+            gh api -X POST "repos/${{ github.repository }}/pages/builds" || true
+          else
+            echo "No new posts."
+          fi

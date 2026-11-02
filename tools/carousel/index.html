@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Carousel maker | Project HealthBridge</title>
+  <link rel="icon" href="../../assets/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .maker { display: grid; grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; padding-block: 2.5rem 5rem; }
+    @media (max-width: 960px) { .maker { grid-template-columns: 1fr; } }
+    .maker h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); margin-bottom: 0.4rem; }
+    .form { display: grid; gap: 1.1rem; }
+    @media (min-width: 961px) { .form { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; padding-right: 0.6rem; } }
+    .form textarea { min-height: 7rem; }
+    .form textarea.short { min-height: 5rem; }
+    .form textarea.tall { min-height: 14rem; }
+    .form .select { width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: 8px; padding: 0.75rem 0.9rem; min-height: 3rem; }
+    .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .chips label { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; border: 1.5px solid var(--line); border-radius: 8px; padding: 0.55rem 0.9rem; cursor: pointer; font-weight: 500; min-height: 2.75rem; }
+    .chips input { width: auto; min-height: 0; accent-color: var(--brand); }
+    .chips label:has(input:checked) { border-color: var(--brand); background: var(--paper-2); }
+    .chips label:has(input:focus-visible) { outline: 2px solid var(--brand); outline-offset: 2px; }
+    .type-form { display: grid; gap: 1.1rem; border: 0; padding: 0; margin: 0; min-width: 0; }
+    .type-form[hidden] { display: none; }
+    .qblock { border: 1.5px solid var(--line); border-radius: 10px; padding: 1rem; display: grid; gap: 0.8rem; }
+    .qblock .qhead { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; }
+    .qblock .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    @media (max-width: 480px) { .qblock .opts { grid-template-columns: 1fr; } }
+    .qblock .btn, .qadd { min-height: 2.5rem; padding: 0 1rem; font-size: 0.88rem; }
+    .deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.4rem; }
+    .deck.story { grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+    .slide canvas { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid var(--line); background: #fff; }
+    .slide .row2 { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; margin-top: 0.5rem; font-size: 0.9rem; color: var(--ink-2); }
+    .slide .btn { min-height: 2.5rem; padding: 0 1rem; font-size: 0.88rem; }
+    .warn { background: var(--warn-bg); color: var(--warn-ink); padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.93rem; margin: 0 0 1rem; max-width: none; }
+    .tools { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.4rem; }
+    .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+    .gate { padding-block: 4rem 6rem; }
+    .gate[hidden], #main[hidden] { display: none; }
+    .gate form { display: grid; gap: 1.1rem; max-width: 24rem; }
+    .gate input { letter-spacing: 0.4em; font-size: 1.4rem; text-align: center; }
+    .gate-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap bar"><a class="brand" href="../../index.html"><img src="../../assets/logo-192.png" alt="" width="37" height="37"><span>HealthBridge</span></a><span class="note">For the HealthBridge team</span></div></header>
+<section id="gate" class="wrap gate" aria-labelledby="gate-title">
+  <form id="gate-form" novalidate>
+    <h1 id="gate-title">Carousel maker</h1>
+    <p class="muted">This is a tool for the team. Enter the 5-digit code to open it.</p>
+    <div><label for="code">Code</label><input id="code" name="code" type="password" inputmode="numeric" autocomplete="off" maxlength="5" aria-describedby="gate-err"></div>
+    <p class="warn" id="gate-err" role="alert" hidden>That code is not right. Check it and try again.</p>
+    <div class="gate-actions"><button class="btn btn-primary" type="submit">Open the maker</button><a class="btn btn-line" href="../../index.html">Back to the site</a></div>
+  </form>
+</section>
+<main id="main" class="wrap" hidden>
+  <div class="maker">
+    <form class="form" id="form" autocomplete="off" novalidate>
+      <div>
+        <h1>Carousel maker</h1>
+        <p class="muted" style="margin:0">You write the words. This lays them out as branded Instagram posts. Nothing is uploaded: it all stays in this browser.</p>
+      </div>
+      <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">What are you posting?</legend>
+        <div class="chips" id="types">
+          <label><input type="radio" name="type" value="article" checked> Article</label>
+          <label><input type="radio" name="type" value="experiment"> Experiment</label>
+          <label><input type="radio" name="type" value="mythbuster"> MythBuster</label>
+          <label><input type="radio" name="type" value="quiz"> Quiz (Story)</label>
+          <label><input type="radio" name="type" value="podcast"> Podcast</label>
+        </div></fieldset>
+      <p class="note" id="hint" style="margin:0" role="status"></p>
+      <div id="forms" style="display:grid;gap:1.1rem"></div>
+      <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">Colours</legend>
+        <div class="chips">
+          <label><input type="radio" name="theme" value="light" checked> Light</label>
+          <label><input type="radio" name="theme" value="dark"> Dark</label>
+          <label><input type="radio" name="theme" value="forest"> Forest</label>
+        </div></fieldset>
+      <button type="button" class="btn btn-line" id="clear">Clear this form</button>
+    </form>
+
+    <section aria-label="Your slides">
+      <div id="warn" class="warn" role="status" hidden></div>
+      <div class="tools"><button class="btn btn-primary" type="button" id="all" disabled>Download all slides</button><span class="note" id="count"></span></div>
+      <div class="deck" id="deck"></div>
+    </section>
+  </div>
+</main>
+<script>
+/* The code gate. This is a polite lock to keep the tool for the team, not real security: the page is a plain file,
+   so anyone determined could read it. The code itself is not written here, only a scrambled check of it. */
+(function () {
+  'use strict'
+  function scramble(str) { var h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (var i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677) } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909); return 4294967296 * (2097151 & h2) + (h1 >>> 0) }
+  var OK = 3121214789226375, KEY = 'hb-carousel-open'
+  var gate = document.getElementById('gate'), main = document.getElementById('main'), err = document.getElementById('gate-err'), input = document.getElementById('code')
+  function open() { gate.hidden = true; main.hidden = false }
+  try { if (sessionStorage.getItem(KEY) === '1') open() } catch (e) { /* storage blocked: ask each time */ }
+  document.getElementById('gate-form').addEventListener('submit', function (e) {
+    e.preventDefault()
+    if (scramble('hb-carousel:' + input.value.trim()) === OK) {
+      try { sessionStorage.setItem(KEY, '1') } catch (x) { /* fine */ }
+      err.hidden = true; open(); window.scrollTo(0, 0)
+    } else { err.hidden = false; input.value = ''; input.focus() }
+  })
+  if (!gate.hidden) input.focus()
+})()
+</script>
+<script>
+(function () {
+  'use strict'
+  var PAD = 90
+  var SERIF = '"Newsreader", Georgia, "Times New Roman", serif'
+  var SANS = '"Instrument Sans", system-ui, "Segoe UI", sans-serif'
+  var THEMES = {
+    light: { bg: '#f3f7f5', ink: '#0c2420', ink2: '#3d574f', brand: '#17614a', grid: 'rgba(23,97,74,0.10)', bad: '#a63d2a', mid: '#8a5d0c' },
+    dark: { bg: '#09191a', ink: '#e9f3ef', ink2: '#9db6ae', brand: '#5fcaa0', grid: 'rgba(95,202,160,0.09)', bad: '#ff8d78', mid: '#e8b45a' },
+    forest: { bg: '#0d3b2f', ink: '#e9f5ef', ink2: '#a9cdbf', brand: '#8fe0b5', grid: 'rgba(233,245,239,0.08)', bad: '#ffb09c', mid: '#f0c878' },
+  }
+  var POST = { w: 1080, h: 1350, top: 0, bottom: 90 }
+  var STORY = { w: 1080, h: 1920, top: 250, bottom: 340 } // Instagram covers the top and bottom of a story with its own buttons
+  var DIM = POST
+  var MAX_BODY = 8 // Instagram allows 10 slides: a cover, up to 8 body slides, and the last slide
+  var KEY = 'hb-carousel-draft-v2'
+  var CATEGORIES = ['Neurology', 'Cardiology', 'Psychology', 'General']
+
+  /* ----- The five post types and their forms ----- */
+  var TYPES = {
+    article: {
+      hint: 'A cover, one idea per slide, and a last slide pointing to the article. 1080 x 1350.',
+      fields: [
+        { name: 'category', label: 'Category', kind: 'select', options: CATEGORIES },
+        { name: 'title', label: 'Title (the first slide)', kind: 'area', short: true, max: 140 },
+        { name: 'author', label: 'Written by', kind: 'text', def: 'Anirudh Shukla', max: 60 },
+        { name: 'slides', label: 'The slides', kind: 'area', tall: true, help: 'One idea per slide. Leave a blank line between slides. About 25 words each reads best.' },
+        { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'The full article is on our Substack. Link in bio.', max: 120 },
+        { name: 'link', label: 'Where to read it', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
+      ],
+    },
+    experiment: {
+      hint: 'Question, who took part, method, results and what it cannot tell us. 1080 x 1350. The cover says it is a student experiment and not medical advice.',
+      fields: [
+        { name: 'category', label: 'Category', kind: 'select', options: CATEGORIES },
+        { name: 'title', label: 'The question we asked (the first slide)', kind: 'area', short: true, max: 140 },
+        { name: 'people', label: 'Who took part, and that they agreed', kind: 'area', short: true, help: 'Example: friends who gave their consent. Anonymous results.' },
+        { name: 'hypothesis', label: 'What we expected', kind: 'area', short: true },
+        { name: 'method', label: 'Method', kind: 'area', help: 'One step per line. Up to 5 steps.' },
+        { name: 'results', label: 'Results', kind: 'area' },
+        { name: 'conclusion', label: 'What we conclude', kind: 'area', short: true },
+        { name: 'limits', label: 'What this cannot tell us', kind: 'area', short: true, help: 'Small groups and no controls: say so. It keeps the post honest.' },
+        { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'The full write-up is on our Substack. Link in bio.', max: 120 },
+        { name: 'link', label: 'Where to read it', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
+      ],
+    },
+    mythbuster: {
+      hint: 'The myth, a verdict, what the evidence shows, two sources and one thing to remember. 1080 x 1350.',
+      fields: [
+        { name: 'category', label: 'Category', kind: 'select', options: CATEGORIES },
+        { name: 'myth', label: 'The myth, as people say it', kind: 'area', short: true, max: 140 },
+        { name: 'verdict', label: 'Verdict', kind: 'select', options: ['Myth', 'Partly true', 'True', 'Not proven'] },
+        { name: 'truth', label: 'What the evidence shows', kind: 'area', help: 'Plain language. About 40 words fits.' },
+        { name: 'source1', label: 'Source 1', kind: 'text', max: 140, help: 'Author or organisation, title, year. Check it yourself first.' },
+        { name: 'source2', label: 'Source 2', kind: 'text', max: 140 },
+        { name: 'takeaway', label: 'One thing to remember', kind: 'area', short: true },
+        { name: 'author', label: 'Written by', kind: 'text', def: 'Anirudh Shukla', max: 60 },
+        { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'More myths on our Substack. Link in bio.', max: 120 },
+        { name: 'link', label: 'Where to read more', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
+      ],
+    },
+    quiz: {
+      hint: 'Instagram Story frames, 1080 x 1920, with space kept clear at the top and bottom. Make the question frames on Friday (add a poll sticker in Instagram) and the answer frames on Saturday.',
+      fields: [
+        { name: 'series', label: 'Series name', kind: 'text', def: 'Weekly quiz', max: 40 },
+        { name: 'mode', label: 'Which frames', kind: 'select', options: [['both', 'Questions and answers'], ['questions', 'Questions only (Friday)'], ['answers', 'Answers only (Saturday)']] },
+      ],
+      custom: 'quiz',
+    },
+    podcast: {
+      hint: 'Cover with a sound wave, what the episode is about, takeaways and where to listen. 1080 x 1350.',
+      fields: [
+        { name: 'episode', label: 'Episode number', kind: 'text', max: 6 },
+        { name: 'title', label: 'Episode title (the first slide)', kind: 'area', short: true, max: 140 },
+        { name: 'guests', label: 'With (guest or hosts)', kind: 'text', max: 80 },
+        { name: 'length', label: 'Length', kind: 'text', max: 20, help: 'Example: 15 min' },
+        { name: 'summary', label: 'What this episode is about', kind: 'area', short: true },
+        { name: 'takeaways', label: 'Takeaways', kind: 'area', tall: true, help: 'One takeaway per slide. Leave a blank line between them. Up to 4.' },
+        { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'New episode out now. Link in bio.', max: 120 },
+        { name: 'link', label: 'Where to listen', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
+      ],
+    },
+  }
+  var LETTERS = ['A', 'B', 'C', 'D']
+  var MAX_Q = 5
+  var blankQ = function () { return { q: '', a: '', b: '', c: '', d: '', ans: 'A', why: '' } }
+  var quiz = [blankQ()]
+
+  var $ = function (id) { return document.getElementById(id) }
+  var form = $('form'), deck = $('deck'), warn = $('warn'), allBtn = $('all'), countEl = $('count'), hint = $('hint'), formsEl = $('forms')
+  var logo = new Image()
+  logo.src = '../../assets/logo.png'
+  var logoReady = new Promise(function (res) { logo.onload = res; logo.onerror = res })
+
+  function el(tag, attrs, text) {
+    var n = document.createElement(tag)
+    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]) })
+    if (text) n.textContent = text
+    return n
+  }
+  function id(type, name) { return 'f-' + type + '-' + name }
+
+  /* ----- Build the forms from the config above ----- */
+  function control(type, f) {
+    var c
+    if (f.kind === 'area') { c = el('textarea', { id: id(type, f.name), name: f.name }); if (f.short) c.className = 'short'; if (f.tall) c.className = 'tall'; if (f.max) c.maxLength = f.max * 2 }
+    else if (f.kind === 'select') {
+      c = el('select', { id: id(type, f.name), name: f.name, class: 'select' })
+      f.options.forEach(function (o) { var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o; c.appendChild(el('option', { value: v }, t)) })
+    } else { c = el('input', { id: id(type, f.name), name: f.name, type: 'text' }); if (f.max) c.maxLength = f.max }
+    if (f.def !== undefined) c.value = f.def
+    if (f.help) c.setAttribute('aria-describedby', id(type, f.name) + '-help')
+    return c
+  }
+  function buildForms() {
+    Object.keys(TYPES).forEach(function (type) {
+      var cfg = TYPES[type]
+      var box = el('div', { class: 'type-form', 'data-type': type }); box.hidden = type !== 'article'
+      cfg.fields.forEach(function (f) {
+        var row = el('div')
+        row.appendChild(el('label', { for: id(type, f.name) }, f.label))
+        row.appendChild(control(type, f))
+        if (f.help) row.appendChild(el('p', { class: 'note', id: id(type, f.name) + '-help', style: 'margin:.4rem 0 0' }, f.help))
+        box.appendChild(row)
+      })
+      if (cfg.custom === 'quiz') {
+        box.appendChild(el('div', { id: 'qlist', style: 'display:grid;gap:1rem' }))
+        box.appendChild(el('button', { type: 'button', class: 'btn btn-line qadd', id: 'qadd' }, 'Add a question'))
+      }
+      formsEl.appendChild(box)
+    })
+  }
+
+  /* ----- The quiz questions ----- */
+  function renderQuiz() {
+    var list = $('qlist'); list.textContent = ''
+    quiz.forEach(function (q, i) {
+      var b = el('fieldset', { class: 'qblock' })
+      var head = el('div', { class: 'qhead' }); head.appendChild(el('legend', { style: 'font-weight:600;padding:0' }, 'Question ' + (i + 1)))
+      var rm = el('button', { type: 'button', class: 'btn btn-line', 'aria-label': 'Remove question ' + (i + 1) }, 'Remove'); rm.disabled = quiz.length === 1
+      rm.addEventListener('click', function () { quiz.splice(i, 1); renderQuiz(); schedule() })
+      head.appendChild(rm); b.appendChild(head)
+      function add(parent, key, label, kind, extra) {
+        var row = el('div'), cid = 'q' + i + '-' + key
+        row.appendChild(el('label', { for: cid }, label))
+        var c = kind === 'area' ? el('textarea', { id: cid, class: 'short' }) : kind === 'select' ? el('select', { id: cid, class: 'select' }) : el('input', { id: cid, type: 'text' })
+        if (kind === 'select') LETTERS.forEach(function (l) { c.appendChild(el('option', { value: l }, l)) })
+        if (extra) c.maxLength = extra
+        c.value = q[key]
+        c.addEventListener('input', function () { q[key] = c.value })
+        row.appendChild(c); parent.appendChild(row)
+      }
+      add(b, 'q', 'The question', 'area', 200)
+      var opts = el('div', { class: 'opts' })
+      LETTERS.forEach(function (l) { add(opts, l.toLowerCase(), 'Option ' + l, 'text', 90) })
+      b.appendChild(opts)
+      add(b, 'ans', 'The correct answer', 'select')
+      add(b, 'why', 'Why (shown on the answer frame)', 'area', 300)
+      list.appendChild(b)
+    })
+    $('qadd').disabled = quiz.length >= MAX_Q
+  }
+  $('forms').addEventListener('click', function (e) {
+    if (e.target && e.target.id === 'qadd' && quiz.length < MAX_Q) { quiz.push(blankQ()); renderQuiz(); schedule(); var last = $('qlist').lastChild; if (last) last.querySelector('textarea').focus() }
+  })
+
+  /* ----- Text layout: wrap to a width, and shrink the type until it fits the box ----- */
+  function wrap(ctx, text, maxW) {
+    var lines = []
+    text.split('\n').forEach(function (para) {
+      var words = para.split(/\s+/).filter(Boolean), line = ''
+      if (!words.length) { lines.push(''); return }
+      words.forEach(function (w) {
+        var t = line ? line + ' ' + w : w
+        if (ctx.measureText(t).width <= maxW || !line) line = t
+        else { lines.push(line); line = w }
+      })
+      lines.push(line)
+    })
+    return lines
+  }
+  function fit(ctx, text, o) {
+    var size = o.max
+    for (; size >= o.min; size -= 2) {
+      ctx.font = o.weight + ' ' + size + 'px ' + o.family
+      var lines = wrap(ctx, text, o.w)
+      if (lines.length * size * o.lh <= o.h) return { size: size, lines: lines, fits: true }
+    }
+    ctx.font = o.weight + ' ' + o.min + 'px ' + o.family
+    return { size: o.min, lines: wrap(ctx, text, o.w), fits: false }
+  }
+  // Draws wrapped text. With o.centre (0 to 1) a short text sits part-way down its box instead of at the top.
+  function paragraph(ctx, text, x, y, o, colour) {
+    var r = fit(ctx, text, o)
+    var used = r.lines.length * r.size * o.lh
+    var top = y + (o.centre ? Math.max(0, (o.h - used) * o.centre) : 0)
+    ctx.fillStyle = colour; ctx.textBaseline = 'top'
+    r.lines.forEach(function (l, i) { ctx.fillText(l, x, top + i * r.size * o.lh) })
+    return { bottom: top + used, fits: r.fits }
+  }
+  // A list with a hanging indent: each item starts with a number or a dash and wraps underneath its own text.
+  function list(ctx, t, items, x, y, o, ordered) {
+    var size = o.max, laid, total, fits = true
+    for (; ; size -= 2) {
+      ctx.font = '400 ' + size + 'px ' + SERIF
+      var ind = size * 1.4
+      laid = items.map(function (it) { return wrap(ctx, it, o.w - ind) })
+      total = laid.reduce(function (a, l) { return a + l.length * size * o.lh }, 0) + (items.length - 1) * size * 0.5
+      if (total <= o.h) break
+      if (size <= o.min) { fits = false; break }
+    }
+    var cy = y, ind2 = size * 1.4
+    ctx.textBaseline = 'top'
+    laid.forEach(function (lines, i) {
+      ctx.fillStyle = t.brand; ctx.font = '600 ' + size + 'px ' + SANS
+      ctx.fillText(ordered ? (i + 1) + '.' : '–', x, cy + size * 0.02)
+      ctx.fillStyle = t.ink; ctx.font = '400 ' + size + 'px ' + SERIF
+      lines.forEach(function (l, j) { ctx.fillText(l, x + ind2, cy + j * size * o.lh) })
+      cy += lines.length * size * o.lh + size * 0.5
+    })
+    return fits
+  }
+  function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath() }
+  function hexA(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')' }
+
+  /* ----- Shared pieces of a slide ----- */
+  // The same heartbeat-to-brain-wave line as the home page
+  function beat(o) { return 'L' + (o + 40) + ',60 C' + (o + 48) + ',60 ' + (o + 52) + ',52 ' + (o + 60) + ',52 C' + (o + 68) + ',52 ' + (o + 72) + ',60 ' + (o + 80) + ',60 L' + (o + 92) + ',60 L' + (o + 98) + ',68 L' + (o + 108) + ',6 L' + (o + 118) + ',100 L' + (o + 126) + ',60 L' + (o + 150) + ',60 C' + (o + 160) + ',60 ' + (o + 166) + ',42 ' + (o + 180) + ',42 C' + (o + 194) + ',42 ' + (o + 200) + ',60 ' + (o + 212) + ',60 L' + (o + 240) + ',60' }
+  var TRACE = new Path2D('M0,60 ' + beat(0) + ' ' + beat(240) + ' ' + beat(480) + ' Q738,34 756,60 T792,60 T828,60 T864,60 Q882,8 900,60 T936,60 Q950,102 972,60 T1008,60 Q1022,26 1044,60 T1080,60 T1116,60 T1152,60 T1200,60')
+  function trace(ctx, t, y) {
+    ctx.save(); ctx.translate(PAD, y); ctx.scale((DIM.w - 2 * PAD) / 1200, 1.5)
+    ctx.strokeStyle = t.brand; ctx.lineWidth = 6 / 1.2; ctx.lineJoin = 'round'; ctx.lineCap = 'round'
+    ctx.stroke(TRACE); ctx.restore()
+  }
+  // A sound wave for the podcast. Its shape comes from the title, so each episode looks a little different.
+  function wave(ctx, t, cy, seedText) {
+    var seed = 0; for (var i = 0; i < seedText.length; i++) seed = (seed + seedText.charCodeAt(i) * (i + 3)) % 997
+    var n = 48, gap = (DIM.w - 2 * PAD) / n
+    ctx.fillStyle = t.brand
+    for (var k = 0; k < n; k++) {
+      var a = Math.abs(Math.sin(k * 0.55 + seed) * Math.cos(k * 0.23 + seed * 1.7)), h = 16 + a * 150
+      rr(ctx, PAD + k * gap, cy - h / 2, gap * 0.55, h, gap * 0.27); ctx.fill()
+    }
+  }
+  function deco(ctx, t, kind, y, seedText) { if (kind === 'wave') wave(ctx, t, y + 80, seedText); else trace(ctx, t, y) }
+  function background(ctx, t) {
+    var W = DIM.w, H = DIM.h
+    ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H)
+    ctx.strokeStyle = t.grid; ctx.lineWidth = 1.5
+    for (var x = 0; x <= W; x += 54) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() }
+    for (var y = 0; y <= H; y += 54) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() }
+    var fade = ctx.createLinearGradient(0, H * 0.3, 0, H * 0.85) // the graph paper fades out towards the bottom
+    fade.addColorStop(0, hexA(t.bg, 0)); fade.addColorStop(1, hexA(t.bg, 1))
+    ctx.fillStyle = fade; ctx.fillRect(0, 0, W, H)
+  }
+  function brandRow(ctx, t, n, total) {
+    var y = DIM.h - DIM.bottom - 68
+    if (logo.naturalWidth) ctx.drawImage(logo, PAD, y, 68, 68)
+    ctx.fillStyle = t.ink; ctx.font = '500 38px ' + SERIF; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'
+    ctx.fillText('HealthBridge', PAD + 84, y + 34)
+    ctx.fillStyle = t.ink2; ctx.font = '500 32px ' + SANS; ctx.textAlign = 'right'
+    ctx.fillText(n + ' / ' + total, DIM.w - PAD, y + 34)
+    ctx.textAlign = 'left'
+  }
+  function labelRule(ctx, t, label) {
+    ctx.fillStyle = t.brand; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'top'
+    ctx.fillText(label, PAD, 120); ctx.fillRect(PAD, 190, 110, 8)
+  }
+
+  /* ----- One slide, by kind ----- */
+  function draw(canvas, s, n, total, d) {
+    canvas.width = DIM.w; canvas.height = DIM.h
+    var ctx = canvas.getContext('2d'), t = THEMES[d.theme] || THEMES.light, W = DIM.w
+    background(ctx, t); ctx.textAlign = 'left'
+    var fits = true, inner = { w: W - 2 * PAD }
+    if (s.kind === 'cover') {
+      ctx.fillStyle = t.brand; ctx.font = '600 36px ' + SANS; ctx.textBaseline = 'top'
+      ctx.fillText(s.label, PAD, 150)
+      var r = paragraph(ctx, s.text, PAD, 230, { w: inner.w, h: 620, max: 150, min: 64, weight: '400', family: SERIF, lh: 1.04 }, t.ink)
+      fits = r.fits
+      if (s.by) { ctx.fillStyle = t.ink2; ctx.font = '500 38px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText(s.by, PAD, Math.min(r.bottom + 40, 880)) }
+      deco(ctx, t, s.deco, 960, s.text)
+    } else if (s.kind === 'text') {
+      labelRule(ctx, t, s.label)
+      fits = paragraph(ctx, s.text, PAD, 270, { w: inner.w, h: 780, max: 96, min: 44, weight: '400', family: SERIF, lh: 1.2, centre: 0.38 }, t.ink).fits
+    } else if (s.kind === 'list') {
+      labelRule(ctx, t, s.label)
+      fits = list(ctx, t, s.items, PAD, 270, { w: inner.w, h: 780, max: 66, min: 36, lh: 1.22 }, s.ordered)
+    } else if (s.kind === 'verdict') {
+      labelRule(ctx, t, 'Verdict')
+      var col = s.verdict === 'Myth' ? t.bad : s.verdict === 'Partly true' || s.verdict === 'Not proven' ? t.mid : t.brand
+      ctx.fillStyle = col; ctx.font = '400 150px ' + SERIF; ctx.textBaseline = 'top'
+      var vw = ctx.measureText(s.verdict).width; if (vw > inner.w) { ctx.font = '400 ' + Math.floor(150 * inner.w / vw) + 'px ' + SERIF }
+      ctx.fillText(s.verdict, PAD, 250)
+      ctx.fillRect(PAD, 440, 110, 8)
+      fits = paragraph(ctx, s.text, PAD, 490, { w: inner.w, h: 600, max: 62, min: 36, weight: '400', family: SERIF, lh: 1.25 }, t.ink).fits
+    } else if (s.kind === 'end') {
+      ctx.fillStyle = t.ink; ctx.font = '400 118px ' + SERIF; ctx.textBaseline = 'top'
+      ctx.fillText(s.heading[0], PAD, 250); ctx.fillText(s.heading[1], PAD, 250 + 124)
+      var c = paragraph(ctx, s.text, PAD, 540, { w: inner.w, h: 230, max: 48, min: 34, weight: '400', family: SANS, lh: 1.35 }, t.ink2)
+      fits = c.fits
+      ctx.fillStyle = t.brand; ctx.font = '600 44px ' + SANS; ctx.textBaseline = 'top'
+      var link = s.link, px = 44
+      while (ctx.measureText(link).width > inner.w && px > 24) { px -= 2; ctx.font = '600 ' + px + 'px ' + SANS }
+      ctx.fillText(link, PAD, Math.max(c.bottom + 50, 700))
+      ctx.fillStyle = t.ink2; ctx.font = '500 34px ' + SANS
+      ctx.fillText('Join us on Substack, Instagram and LinkedIn', PAD, Math.max(c.bottom + 130, 780))
+      deco(ctx, t, s.deco, 960, s.heading.join(' '))
+    } else if (s.kind === 'qs' || s.kind === 'qa') {
+      fits = drawQuiz(ctx, t, s, d)
+    }
+    brandRow(ctx, t, n, total)
+    return fits
+  }
+
+  // A story frame: the question with its options, or the same with the right answer marked and a reason.
+  function drawQuiz(ctx, t, s, d) {
+    var W = DIM.w, top = DIM.top, ask = s.kind === 'qs', fits = true
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left'
+    ctx.fillStyle = t.brand; ctx.font = '600 34px ' + SANS; ctx.fillText(d.series, PAD, top + 20)
+    ctx.fillStyle = t.ink2; ctx.textAlign = 'right'; ctx.fillText((ask ? 'Question ' : 'Answer ') + s.i + ' of ' + s.of, W - PAD, top + 20); ctx.textAlign = 'left'
+    var q = paragraph(ctx, s.q, PAD, top + 110, { w: W - 2 * PAD, h: ask ? 430 : 280, max: ask ? 84 : 56, min: 36, weight: '400', family: SERIF, lh: 1.12 }, t.ink)
+    fits = q.fits
+    var y = top + (ask ? 600 : 420), oh = ask ? 132 : 112, gap = ask ? 22 : 14, tw = W - 2 * PAD - (ask ? 130 : 270)
+    LETTERS.forEach(function (l, k) {
+      var text = s.opts[k]; if (!text) return
+      var right = !ask && l === s.ans, dim = !ask && !right
+      ctx.save(); if (dim) ctx.globalAlpha = 0.6
+      rr(ctx, PAD, y, W - 2 * PAD, oh, 18)
+      if (right) { ctx.fillStyle = t.brand; ctx.fill() } else { ctx.fillStyle = hexA(t.brand, 0.08); ctx.fill(); ctx.strokeStyle = ask ? t.brand : hexA(t.ink, 0.3); ctx.lineWidth = 3; ctx.stroke() }
+      ctx.fillStyle = right ? t.bg : t.brand; ctx.font = '600 40px ' + SANS; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      ctx.fillText(l, PAD + 52, y + oh / 2 + 2)
+      ctx.textAlign = 'left'
+      var o = paragraph(ctx, text, PAD + 100, y + 12, { w: tw, h: oh - 24, max: 42, min: 26, weight: '500', family: SANS, lh: 1.2, centre: 0.5 }, right ? t.bg : t.ink)
+      if (!o.fits) fits = false
+      if (right) { ctx.fillStyle = t.bg; ctx.font = '600 28px ' + SANS; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('Correct', W - PAD - 28, y + oh / 2 + 2); ctx.textAlign = 'left' }
+      ctx.restore()
+      y += oh + gap
+    })
+    if (!ask && s.why) {
+      ctx.fillStyle = t.brand; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText('Why', PAD, y + 20)
+      var w = paragraph(ctx, s.why, PAD, y + 70, { w: W - 2 * PAD, h: DIM.h - DIM.bottom - 68 - 30 - (y + 70), max: 40, min: 28, weight: '400', family: SANS, lh: 1.3 }, t.ink2)
+      if (!w.fits) fits = false
+    }
+    return fits
+  }
+
+  /* ----- Reading the form: each type turns its fields into a list of slides ----- */
+  function paras(s) { return s.split(/\n\s*\n/).map(function (p) { return p.replace(/\s*\n\s*/g, ' ').trim() }).filter(Boolean) }
+  function lines(s) { return s.split('\n').map(function (p) { return p.trim() }).filter(Boolean) }
+  function words(s) { return s.split(/\s+/).filter(Boolean).length }
+  function slug(s) { return (s || 'carousel').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'carousel' }
+  function longWords(arr, from, notes, max) { arr.forEach(function (s, i) { if (words(s) > (max || 45)) notes.push('Slide ' + (i + from) + ' has ' + words(s) + ' words, which makes the text small. Try splitting it.') }) }
+
+  var BUILD = {
+    article: function (v, notes) {
+      var body = paras(v.slides)
+      if (body.length > MAX_BODY) notes.push('Instagram allows 10 slides, so only the first ' + MAX_BODY + ' of your ' + body.length + ' are used. Cut or merge some.')
+      longWords(body, 2, notes)
+      body = body.slice(0, MAX_BODY)
+      var out = [{ kind: 'cover', label: v.category, text: v.title || 'Your title goes here', by: 'By ' + (v.author || 'HealthBridge'), deco: 'trace' }]
+      body.forEach(function (s) { out.push({ kind: 'text', label: v.category, text: s }) })
+      out.push({ kind: 'end', heading: ['Read the full', 'article'], text: v.closing || 'The full article is on our Substack.', link: v.link, deco: 'trace' })
+      return { slides: out, ready: !!v.title && body.length > 0, name: v.title, need: 'Write a title and at least one slide to download.' }
+    },
+    experiment: function (v, notes) {
+      var steps = lines(v.method)
+      if (steps.length > 5) notes.push('Only the first 5 of your ' + steps.length + ' method steps are used. Keep the method short and put the detail in the article.')
+      if (!v.limits.trim() && v.results.trim()) notes.push('Add what the experiment cannot tell us. A small group without a control group should say so.')
+      if (!v.people.trim() && v.title.trim()) notes.push('Say who took part and that they agreed. It builds trust.')
+      longWords([v.hypothesis, v.results, v.conclusion, v.limits, v.people].filter(Boolean), 2, notes, 55)
+      var out = [{ kind: 'cover', label: 'Experiment, ' + v.category, text: v.title || 'Your question goes here', by: 'A student experiment. Not medical advice.', deco: 'trace' }]
+      if (v.people.trim()) out.push({ kind: 'text', label: 'Who took part', text: v.people.trim() })
+      if (v.hypothesis.trim()) out.push({ kind: 'text', label: 'What we expected', text: v.hypothesis.trim() })
+      if (steps.length) out.push({ kind: 'list', label: 'Method', items: steps.slice(0, 5), ordered: true })
+      if (v.results.trim()) out.push({ kind: 'text', label: 'Results', text: v.results.trim() })
+      if (v.conclusion.trim()) out.push({ kind: 'text', label: 'What we conclude', text: v.conclusion.trim() })
+      if (v.limits.trim()) out.push({ kind: 'text', label: 'What this cannot tell us', text: v.limits.trim() })
+      out.push({ kind: 'end', heading: ['Read the full', 'write-up'], text: v.closing || 'The full write-up is on our Substack.', link: v.link, deco: 'trace' })
+      return { slides: out, ready: !!v.title && !!v.results.trim(), name: v.title, need: 'Write the question and the results to download.' }
+    },
+    mythbuster: function (v, notes) {
+      var src = [v.source1, v.source2].filter(function (s) { return s.trim() })
+      if (v.myth.trim() && src.length < 2) notes.push('A MythBuster needs two sources you have checked yourself. You have ' + src.length + '.')
+      longWords([v.truth].filter(Boolean), 3, notes, 55)
+      var out = [{ kind: 'cover', label: 'MythBuster, ' + v.category, text: v.myth ? '“' + v.myth.trim() + '”' : 'The myth goes here', by: 'By ' + (v.author || 'HealthBridge'), deco: 'trace' }]
+      out.push({ kind: 'verdict', verdict: v.verdict, text: v.truth.trim() || 'What the evidence shows goes here.' })
+      if (src.length) out.push({ kind: 'list', label: 'Sources', items: src.map(function (s) { return s.trim() }), ordered: false })
+      if (v.takeaway.trim()) out.push({ kind: 'text', label: 'What to remember', text: v.takeaway.trim() })
+      out.push({ kind: 'end', heading: ['Read the', 'full story'], text: v.closing || 'More myths on our Substack.', link: v.link, deco: 'trace' })
+      return { slides: out, ready: !!v.myth.trim() && !!v.truth.trim(), name: v.myth, need: 'Write the myth and what the evidence shows to download.' }
+    },
+    podcast: function (v, notes) {
+      var tk = paras(v.takeaways)
+      if (tk.length > 4) notes.push('Only the first 4 of your ' + tk.length + ' takeaways are used.')
+      longWords(tk, 3, notes)
+      var by = [v.guests.trim() ? 'With ' + v.guests.trim() : '', v.length.trim()].filter(Boolean).join(', ')
+      var out = [{ kind: 'cover', label: 'Podcast' + (v.episode.trim() ? ', episode ' + v.episode.trim() : ''), text: v.title || 'Your episode title goes here', by: by, deco: 'wave' }]
+      if (v.summary.trim()) out.push({ kind: 'text', label: 'This episode', text: v.summary.trim() })
+      tk.slice(0, 4).forEach(function (s) { out.push({ kind: 'text', label: 'Takeaway', text: s }) })
+      out.push({ kind: 'end', heading: ['Listen to the', 'full episode'], text: v.closing || 'New episode out now.', link: v.link, deco: 'wave' })
+      return { slides: out, ready: !!v.title && (tk.length > 0 || !!v.summary.trim()), name: v.title, need: 'Write the title and a summary or a takeaway to download.' }
+    },
+    quiz: function (v, notes) {
+      var done = []
+      quiz.forEach(function (q, i) {
+        var opts = [q.a, q.b, q.c, q.d].map(function (s) { return s.trim() })
+        var filled = opts.filter(Boolean).length
+        if (!q.q.trim() && !filled) return
+        var n = i + 1
+        if (!q.q.trim()) { notes.push('Question ' + n + ' has no question text.'); return }
+        if (filled < 2) { notes.push('Question ' + n + ' needs at least two options.'); return }
+        if (!opts[LETTERS.indexOf(q.ans)]) { notes.push('Question ' + n + ': the correct answer ' + q.ans + ' is empty. Pick an option that has text.'); return }
+        done.push({ q: q.q.trim(), opts: opts, ans: q.ans, why: q.why.trim() })
+      })
+      // With nothing written yet, show a sample so the format is visible (download stays off until a real question exists)
+      var sample = !done.length
+      if (sample) done = [{ q: 'Your question goes here', opts: ['First option', 'Second option', 'Third option', 'Fourth option'], ans: 'B', why: 'Why the answer is right goes here.' }]
+      var out = []
+      if (v.mode !== 'answers') done.forEach(function (q, i) { out.push({ kind: 'qs', i: i + 1, of: done.length, q: q.q, opts: q.opts }) })
+      if (v.mode !== 'questions') done.forEach(function (q, i) { out.push({ kind: 'qa', i: i + 1, of: done.length, q: q.q, opts: q.opts, ans: q.ans, why: q.why }) })
+      if (v.mode !== 'questions' && done.some(function (q) { return !q.why })) notes.push('Add a reason for each answer. The answer frame teaches more with a line on why.')
+      return { slides: out, ready: !sample, name: v.series + ' ' + (done[0] ? done[0].q : ''), need: 'Finish one question (text, two options and the right answer) to download.', story: true }
+    },
+  }
+
+  function currentType() { return (form.querySelector('input[name=type]:checked') || {}).value || 'article' }
+  function read(type) {
+    var v = { theme: (form.querySelector('input[name=theme]:checked') || {}).value || 'light' }
+    TYPES[type].fields.forEach(function (f) { var c = $(id(type, f.name)); v[f.name] = c ? (f.kind === 'select' ? c.value : c.value.trim()) : '' })
+    v.link = v.link || ''
+    return v
+  }
+
+  function download(canvas, name) {
+    canvas.toBlob(function (blob) {
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name
+      document.body.appendChild(a); a.click(); a.remove()
+      setTimeout(function () { URL.revokeObjectURL(a.href) }, 5000)
+    }, 'image/png')
+  }
+
+  var timer = 0
+  function schedule() { clearTimeout(timer); timer = setTimeout(render, 120); save() }
+  function summary(s) { return s.text || s.q || s.verdict || (s.items || []).join('. ') || s.label || '' }
+  async function render() {
+    await logoReady
+    var type = currentType(), d = read(type), notes = []
+    var b = BUILD[type](d, notes)
+    DIM = b.story ? STORY : POST
+    deck.className = 'deck' + (b.story ? ' story' : '')
+    deck.textContent = ''
+    var canvases = [], total = b.slides.length, size = DIM.w + ' x ' + DIM.h
+    var file = function (i) { return 'healthbridge-' + type + '-' + slug(b.name) + '-' + (i + 1) + '.png' }
+    b.slides.forEach(function (s, i) {
+      var fig = document.createElement('figure'); fig.className = 'slide'; fig.style.margin = 0
+      var cv = document.createElement('canvas'); cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + summary(s))
+      if (!draw(cv, s, i + 1, total, d)) notes.push('Slide ' + (i + 1) + ' is too long to fit even at the smallest size. Shorten it.')
+      var row = document.createElement('div'); row.className = 'row2'
+      var label = document.createElement('span'); label.textContent = 'Slide ' + (i + 1) + ' of ' + total
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn btn-line'; btn.textContent = 'Download'; btn.disabled = !b.ready
+      btn.setAttribute('aria-label', 'Download slide ' + (i + 1))
+      btn.addEventListener('click', function () { download(cv, file(i)) })
+      row.appendChild(label); row.appendChild(btn); fig.appendChild(cv); fig.appendChild(row); deck.appendChild(fig); canvases.push(cv)
+    })
+    allBtn.disabled = !b.ready
+    allBtn.onclick = function () { canvases.forEach(function (cv, i) { setTimeout(function () { download(cv, file(i)) }, i * 350) }) }
+    countEl.textContent = b.ready ? total + (total === 1 ? ' slide, ' : ' slides, ') + size : b.need
+    warn.hidden = !notes.length; warn.textContent = notes.join(' ')
+  }
+
+  function showType() {
+    var type = currentType()
+    Array.prototype.forEach.call(formsEl.children, function (box) { box.hidden = box.getAttribute('data-type') !== type })
+    hint.textContent = TYPES[type].hint
+  }
+
+  /* ----- Keep a draft in this browser (never sent anywhere) ----- */
+  function save() {
+    try {
+      var vals = {}
+      Object.keys(TYPES).forEach(function (type) { TYPES[type].fields.forEach(function (f) { var c = $(id(type, f.name)); if (c) vals[type + '.' + f.name] = c.value }) })
+      localStorage.setItem(KEY, JSON.stringify({ type: currentType(), theme: (form.querySelector('input[name=theme]:checked') || {}).value, vals: vals, quiz: quiz }))
+    } catch (e) { /* private mode: fine */ }
+  }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!d) return
+      Object.keys(d.vals || {}).forEach(function (k) { var p = k.split('.'), c = $(id(p[0], p[1])); if (c && typeof d.vals[k] === 'string') c.value = d.vals[k] })
+      var r = form.querySelector('input[name=theme][value="' + d.theme + '"]'); if (r) r.checked = true
+      var tr = form.querySelector('input[name=type][value="' + d.type + '"]'); if (tr) tr.checked = true
+      if (Array.isArray(d.quiz) && d.quiz.length) quiz = d.quiz.slice(0, MAX_Q).map(function (q) { var b = blankQ(); Object.keys(b).forEach(function (k) { if (typeof q[k] === 'string') b[k] = q[k] }); return b })
+    } catch (e) { /* ignore a damaged draft */ }
+  }
+  $('clear').addEventListener('click', function () {
+    var type = currentType()
+    TYPES[type].fields.forEach(function (f) { var c = $(id(type, f.name)); if (!c) return; c.value = f.def !== undefined ? f.def : f.kind === 'select' ? (Array.isArray(f.options[0]) ? f.options[0][0] : f.options[0]) : '' })
+    if (type === 'quiz') { quiz = [blankQ()]; renderQuiz() }
+    schedule()
+  })
+  form.addEventListener('input', schedule)
+  form.addEventListener('change', function (e) { if (e.target && e.target.name === 'type') showType() })
+  form.addEventListener('submit', function (e) { e.preventDefault() })
+
+  buildForms()
+  load()
+  renderQuiz()
+  showType()
+  var fonts = document.fonts
+  var ask = fonts && fonts.load ? Promise.all([fonts.load('400 80px Newsreader'), fonts.load('500 40px Newsreader'), fonts.load('400 40px "Instrument Sans"'), fonts.load('500 40px "Instrument Sans"'), fonts.load('600 40px "Instrument Sans"')]).catch(function () {}) : Promise.resolve()
+  ask.then(render)
+  if (fonts && fonts.addEventListener) fonts.addEventListener('loadingdone', render)
+})()
+</script>
+</body>
+</html>

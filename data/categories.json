@@ -1,0 +1,3 @@
+{
+  "_help": "Pin a post to a category: add a line  \"the-end-of-the-post-link\": \"Neurology\"  (or Cardiology, Psychology). The part is whatever comes after /p/ in the Substack link. Posts not listed here are sorted by the words in their title; anything unmatched shows as General."
+}

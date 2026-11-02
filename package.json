@@ -1,0 +1,11 @@
+{
+  "name": "projecthealthbridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Project HealthBridge: a student-led health innovation lab. A static site, no build step.",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "update": "node tools/update-articles.mjs",
+    "test": "node --test"
+  }
+}
