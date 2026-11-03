@@ -454,3 +454,4 @@ details[open] summary { margin-bottom: 0.6rem; }
 
 .form-status { margin: 1rem 0 0; }
 .form-status.bad { color: #d0453f; }
+@media (max-width: 860px) { .js .founders .founder.reveal:nth-child(1), .js .founders .founder.reveal:nth-child(2) { transform: translateY(18px); } .js .founders .founder.reveal.in { transform: none; } }
