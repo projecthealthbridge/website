@@ -245,7 +245,7 @@
   <div class="wrap split">
     <div>
       <h2 id="contact-title">Send us a message</h2>
-      <p class="muted">Write your message and press send. It opens your email app with everything filled in, ready to send.</p>
+      <p class="muted">Write your message and press send. It goes straight to our inbox, so you do not need to open your email app.</p>
       <div class="ways">
         <div class="way"><h3>Email</h3><p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=projecthealthbridge0701@gmail.com" target="_blank" rel="noopener">projecthealthbridge0701@gmail.com</a></p><p>We respond within 24-48 hours.</p></div>
         <div class="way"><h3>Location</h3><p>Singapore</p></div>
@@ -254,7 +254,8 @@
         </div>
       </div>
     </div>
-    <form id="contact-form" class="panel" data-to="projecthealthbridge0701@gmail.com">
+    <form id="contact-form" class="panel" data-key="ec45683e-27fb-460a-a30e-999f0b4f3ede" data-to="projecthealthbridge0701@gmail.com">
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
       <div class="two">
         <div class="field"><label for="first">First name</label><input id="first" name="first" autocomplete="given-name" required></div>
         <div class="field"><label for="last">Last name</label><input id="last" name="last" autocomplete="family-name"></div>
@@ -262,6 +263,7 @@
       <div class="field"><label for="email">Your email address</label><input id="email" name="email" type="email" autocomplete="email" required></div>
       <div class="field"><label for="message">Message</label><textarea id="message" name="message" required></textarea></div>
       <button class="btn btn-primary" type="submit">Send message</button>
+      <p class="note form-status" role="status" aria-live="polite" data-status hidden></p>
     </form>
   </div>
 </section>

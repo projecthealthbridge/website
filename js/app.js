@@ -199,19 +199,38 @@
     if (t) { p.textContent = t; p.hidden = false }
   })
 
-  /* Contact form: opens a new message in Gmail with the text filled in. */
+  /* Contact form: sent straight to the HealthBridge inbox through Web3Forms, and the visitor stays on the page. If sending fails,
+     the message is kept in the form and the email address is shown instead. */
   var contact = document.getElementById('contact-form')
   if (contact) {
+    var status = contact.querySelector('[data-status]')
+    var send = contact.querySelector('button[type="submit"]')
+    var say = function (text, bad) { status.textContent = text; status.hidden = false; status.classList.toggle('bad', !!bad) }
     contact.addEventListener('submit', function (e) {
       e.preventDefault()
-      var f = contact
-      var name = (f.first.value + ' ' + f.last.value).trim()
-      var body = f.message.value + '\n\n' + name + '\n' + f.email.value
-      var to = contact.getAttribute('data-to')
-      var url = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) + '&su=' + encodeURIComponent('Message from ' + name + ' via the HealthBridge site') + '&body=' + encodeURIComponent(body)
-      var win = window.open(url, '_blank')
-      if (win) win.opener = null
-      else window.location.href = url // pop-ups blocked: open it in this tab instead
+      if (contact.botcheck && contact.botcheck.checked) return // a bot filled the hidden box
+      var name = (contact.first.value + ' ' + contact.last.value).trim()
+      send.disabled = true
+      say('Sending...')
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: contact.getAttribute('data-key'),
+          subject: 'Message from ' + name + ' via the HealthBridge site',
+          from_name: 'HealthBridge website',
+          name: name,
+          email: contact.email.value,
+          message: contact.message.value,
+          botcheck: ''
+        })
+      }).then(function (r) { return r.json() }).then(function (res) {
+        if (!res.success) throw new Error(res.message || 'failed')
+        contact.reset()
+        say('Thank you, your message is on its way. We reply within 24-48 hours.')
+      }).catch(function () {
+        say('Sorry, that did not send. Your message is still here. Try again, or email us at ' + contact.getAttribute('data-to') + '.', true)
+      }).then(function () { send.disabled = false })
     })
   }
 
