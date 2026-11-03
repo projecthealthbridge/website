@@ -4,6 +4,16 @@
   'use strict'
   var data = window.HB_DATA || {}
 
+  /* Refreshing a page starts again at the top, instead of where the visitor had scrolled to or at an old #section. */
+  try {
+    var navEntry = performance.getEntriesByType('navigation')[0]
+    if (navEntry && navEntry.type === 'reload') {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search)
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+  } catch (err) { /* older browsers just keep their own behaviour */ }
+
   /* Arriving on a link such as index.html#join: the page keeps growing and shrinking while it loads (articles, the 3D
      models), which left the visitor far from the section. Put the section back under the header a few times while the
      page settles, and stop at once if the visitor scrolls themselves. */
