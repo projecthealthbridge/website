@@ -9,5 +9,9 @@
    It never runs on your own computer (localhost), never runs when a visitor has "Do Not Track" on, and
    when it is on, the footer says so. Leave it empty to count nothing. */
 window.HB_SITE = {
+  /* KNOWLEDGE IN MOTION VIDEOS. While live is false, the home page hides the "Meet Pablo" section and shows the
+     video card as "Coming soon". After the first video is posted, set live to true (and put the link to the videos
+     in url, for example your Instagram or YouTube page): Pablo appears and the card becomes a link. */
+  videos: { live: false, url: '' },
   goatcounter: 'projecthealthbridge',
 }

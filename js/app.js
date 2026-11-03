@@ -215,6 +215,27 @@
     if (t) { p.textContent = t; p.hidden = false }
   })
 
+  /* Knowledge in Motion: hidden until the first video is out (data/site.js, videos.live). */
+  var videos = (window.HB_SITE && window.HB_SITE.videos) || {}
+  if (videos.live) {
+    var pab = document.getElementById('pablo')
+    if (pab) {
+      pab.hidden = false
+      if (videos.url) {
+        var pt = pab.querySelector('blockquote')
+        if (pt) { var wl = document.createElement('p'); var wa = document.createElement('a'); wa.className = 'btn btn-primary'; wa.href = videos.url; wa.target = '_blank'; wa.rel = 'noopener'; wa.textContent = 'Watch our videos'; wl.appendChild(wa); pt.parentNode.appendChild(wl) }
+      }
+    }
+    var vcard = document.querySelector('[data-videos-card]')
+    if (vcard) {
+      var va = document.createElement('a'); va.className = 'item'; va.href = videos.url || '#pablo-title'
+      if (videos.url) { va.target = '_blank'; va.rel = 'noopener' }
+      va.innerHTML = vcard.innerHTML
+      var vs = va.querySelector('.status'); if (vs) vs.remove()
+      vcard.replaceWith(va)
+    }
+  }
+
   /* Contact form: sent straight to the HealthBridge inbox through Web3Forms, and the visitor stays on the page. If sending fails,
      the message is kept in the form and the email address is shown instead. */
   var contact = document.getElementById('contact-form')

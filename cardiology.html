@@ -64,6 +64,45 @@
   <div class="callout warn"><h3>Chest pain, fainting or a racing heart that will not settle?</h3><p>Do not wait. Call 995 (or go to the nearest emergency department). The articles here are for learning, not for checking symptoms.</p></div>
 </div></section>
 
+<section class="block" id="model-section" aria-labelledby="model-title">
+  <div class="wrap">
+    <div class="head"><h2 id="model-title">Explore the heart in 3D</h2><p>Pull the heart apart to see its working parts. Tap a part, or its name in the list, to read what it does.</p></div>
+    <div class="anat solo" data-anatomy data-single data-current="heart">
+      <div class="stage">
+        <div class="stage-view" data-stage>
+          <div class="stage-art" data-fallback><div data-art="heart"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 55C16 43.500 8 33 8 23.500a12.500 12.500 0 0 1 24-4.500 12.500 12.500 0 0 1 24 4.500C56 33 48 43.500 32 55z"/><path d="M4 34h15l4.500-9 7 19 5-13 3.500 3H60"/></svg></div></div>
+          <canvas data-canvas tabindex="0" role="img" aria-label="Interactive 3D model, split into its parts. Drag to turn it, or use the arrow keys. The list beside it describes every part."></canvas>
+          <div class="labels" data-labels></div>
+          <p class="stage-loading" role="status">Loading the 3D model</p>
+        </div>
+        <div class="stage-tools">
+          <label class="explode"><span>Together</span><input type="range" min="0" max="100" value="0" data-explode><span>Apart</span></label>
+          <button class="stage-btn" type="button" data-apart>Pull apart</button>
+          <button class="stage-btn" type="button" data-reset>Reset</button>
+        </div>
+        <p class="sr-only" role="status" aria-live="polite" data-status></p>
+      </div>
+      <div class="parts">
+      <ul class="part-list" data-model="heart">
+        <li><button class="part" type="button" data-part="rightAtrium" aria-expanded="false"><span class="swatch" style="--c:#e29a9c" aria-hidden="true"></span><span class="part-name">Right atrium</span></button><p class="part-fn">Receives oxygen-poor blood coming back from the body through the vena cava.</p></li>
+        <li><button class="part" type="button" data-part="rightVentricle" aria-expanded="false"><span class="swatch" style="--c:#cc6a70" aria-hidden="true"></span><span class="part-name">Right ventricle</span></button><p class="part-fn">Pumps oxygen-poor blood to the lungs through the pulmonary artery.</p></li>
+        <li><button class="part" type="button" data-part="leftAtrium" aria-expanded="false"><span class="swatch" style="--c:#d98486" aria-hidden="true"></span><span class="part-name">Left atrium</span></button><p class="part-fn">Receives oxygen-rich blood from the lungs through the pulmonary veins.</p></li>
+        <li><button class="part" type="button" data-part="leftVentricle" aria-expanded="false"><span class="swatch" style="--c:#a93a45" aria-hidden="true"></span><span class="part-name">Left ventricle</span></button><p class="part-fn">The strongest chamber. It pumps oxygen-rich blood out to the whole body through the aorta.</p></li>
+        <li><button class="part" type="button" data-part="aorta" aria-expanded="false"><span class="swatch" style="--c:#d0453f" aria-hidden="true"></span><span class="part-name">Aorta</span></button><p class="part-fn">The body's largest artery. It carries oxygen-rich blood from the heart to the rest of the body.</p></li>
+        <li><button class="part" type="button" data-part="pulmonaryArtery" aria-expanded="false"><span class="swatch" style="--c:#3d86b5" aria-hidden="true"></span><span class="part-name">Pulmonary artery</span></button><p class="part-fn">Carries oxygen-poor blood from the heart to the lungs. It is one of the few arteries that carries oxygen-poor blood.</p></li>
+        <li><button class="part" type="button" data-part="venaCava" aria-expanded="false"><span class="swatch" style="--c:#3d86b5" aria-hidden="true"></span><span class="part-name">Vena cava</span></button><p class="part-fn">The two largest veins, one from the upper body and one from the lower. They bring oxygen-poor blood back to the right atrium.</p></li>
+        <li><button class="part" type="button" data-part="pulmonaryVeins" aria-expanded="false"><span class="swatch" style="--c:#d0453f" aria-hidden="true"></span><span class="part-name">Pulmonary veins</span></button><p class="part-fn">Carry oxygen-rich blood from the lungs to the left atrium. They are among the few veins that carry oxygen-rich blood.</p></li>
+        <li><button class="part" type="button" data-part="coronaryArteries" aria-expanded="false"><span class="swatch" style="--c:#ff7a45" aria-hidden="true"></span><span class="part-name">Coronary arteries</span></button><p class="part-fn">Wrap around the outside of the heart and feed the heart muscle itself with oxygen-rich blood. If one is blocked, part of the muscle is starved of oxygen, which is what causes a heart attack.</p></li>
+        <li><button class="part" type="button" data-part="cardiacVeins" aria-expanded="false"><span class="swatch" style="--c:#5aa7c9" aria-hidden="true"></span><span class="part-name">Cardiac veins</span></button><p class="part-fn">Collect the used, oxygen-poor blood from the heart muscle and drain it into the right atrium, mostly through a large vein called the coronary sinus.</p></li>
+        <li><button class="part" type="button" data-part="valves" aria-expanded="false"><span class="swatch" style="--c:#d9a441" aria-hidden="true"></span><span class="part-name">Heart valves</span></button><p class="part-fn">Four one-way doors, between the atria and ventricles and at the exits of the heart, that stop blood flowing backwards. Their closing makes the sound of a heartbeat.</p></li>
+      </ul>
+      </div>
+    </div>
+    <p class="note stage-note" data-note>A model for learning, based on one person's scans, so real hearts vary. Blue vessels carry oxygen-poor blood and red vessels carry oxygen-rich blood. If the 3D view does not load, the list still tells you what every part does.</p>
+    <p class="note stage-note">3D models: BodyParts3D, © The Database Center for Life Science, licensed under <a class="link" href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC Attribution-Share Alike 2.1 Japan</a>. We merged, trimmed, smoothed and recoloured the parts. <a class="link" href="credits.html">All credits</a></p>
+  </div>
+</section>
+
 <section class="block tint"><div class="wrap">
   <div class="head"><h2>Our cardiology writing</h2></div>
   <ul class="rows" data-articles data-category="Cardiology"></ul>
@@ -82,7 +121,7 @@
         <a class="brand" href="index.html"><img src="assets/logo-192.png" alt="" width="37" height="37"><span>HealthBridge</span></a>
         <p style="margin-top:1rem;max-width:30ch">A student-led health awareness project in Singapore.</p>
       </div>
-      <div><h2>Read</h2><ul><li><a href="articles.html">Articles</a></li><li><a href="papers.html">Papers</a></li><li><a href="weekly.html">MythBusters</a></li><li><a href="experiments.html">Experiments</a></li><li><a href="quiz.html">Quiz</a></li><li><a href="https://projecthealthbridge.substack.com/" target="_blank" rel="noopener">Substack</a></li></ul></div>
+      <div><h2>Read</h2><ul><li><a href="articles.html">Articles</a></li><li><a href="papers.html">Papers</a></li><li><a href="weekly.html">MythBusters</a></li><li><a href="how-we-check.html">How we check facts</a></li><li><a href="experiments.html">Experiments</a></li><li><a href="quiz.html">Quiz</a></li><li><a href="https://projecthealthbridge.substack.com/" target="_blank" rel="noopener">Substack</a></li></ul></div>
       <div><h2>Explore</h2><ul><li><a href="neurology.html">Neurology</a></li><li><a href="cardiology.html">Cardiology</a></li><li><a href="psychology.html">Psychology</a></li><li><a href="glossary.html">Glossary</a></li><li><a href="reading-list.html">Reading list</a></li><li><a href="about.html">About</a></li><li><a href="index.html#join">Join us</a></li></ul></div>
       <div><h2>Need help now?</h2>
         <ul class="help">

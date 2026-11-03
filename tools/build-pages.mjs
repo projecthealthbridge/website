@@ -1,3 +1,6 @@
+// STOP: DO NOT RUN THIS FILE. The pages have been edited by hand since it was written (new hero, MythBusters, the
+// "How we check facts" page, the contact form, the side-by-side models), and running it would overwrite all of that.
+// It is kept only as a reference. Edit the .html files directly.
 // Writes the site's pages (index, articles, neurology, ... credits, 404) from templates, so the header, footer,
 // menu and the repeated blocks stay identical on every page.
 //
