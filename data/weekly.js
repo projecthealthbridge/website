@@ -6,6 +6,7 @@
    {
      date: '2026-11-09',                         // the day it was posted, year-month-day
      title: 'Brain Myth of the Week: ...',
+     author: 'Anirudh Shukla',                   // who wrote it (any name in data/members.js)
      claim: 'The myth, as people usually say it.',
      verdict: 'Myth',                            // Myth, Fact, or Partly true
      explanation: 'What the research actually shows, in plain language.',

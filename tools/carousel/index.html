@@ -138,6 +138,7 @@
   if (!gate.hidden) input.focus()
 })()
 </script>
+<script src="../../data/members.js"></script>
 <script>
 (function () {
   'use strict'
@@ -155,6 +156,7 @@
   var MAX_BODY = 8 // Instagram allows 10 slides: a cover, up to 8 body slides, and the last slide
   var KEY = 'hb-carousel-draft-v2'
   var CATEGORIES = ['Neurology', 'Cardiology', 'Psychology', 'General']
+  var MEMBERS = window.HB_MEMBERS && window.HB_MEMBERS.length ? window.HB_MEMBERS : ['HealthBridge'] // data/members.js
 
   /* ----- The five post types and their forms ----- */
   var TYPES = {
@@ -163,7 +165,8 @@
       fields: [
         { name: 'category', label: 'Category', kind: 'select', options: CATEGORIES },
         { name: 'title', label: 'Title (the first slide)', kind: 'area', short: true, max: 140 },
-        { name: 'author', label: 'Written by', kind: 'text', def: 'Anirudh Shukla', max: 60 },
+        { name: 'author', label: 'Written by', kind: 'select', options: MEMBERS, def: MEMBERS[0], help: 'The list comes from data/members.js.' },
+        { name: 'author2', label: 'Or another member (type a name, this replaces the choice above)', kind: 'text', max: 60 },
         { name: 'slides', label: 'The slides', kind: 'area', tall: true, help: 'One idea per slide. Leave a blank line between slides. About 25 words each reads best.' },
         { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'The full article is on our Substack. Link in bio.', max: 120 },
         { name: 'link', label: 'Where to read it', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
@@ -190,11 +193,19 @@
         { name: 'category', label: 'Category', kind: 'select', options: CATEGORIES },
         { name: 'myth', label: 'The myth, as people say it', kind: 'area', short: true, max: 140 },
         { name: 'verdict', label: 'Verdict', kind: 'select', options: ['Myth', 'Partly true', 'True', 'Not proven'] },
-        { name: 'truth', label: 'What the evidence shows', kind: 'area', help: 'Plain language. About 40 words fits.' },
-        { name: 'source1', label: 'Source 1', kind: 'text', max: 140, help: 'Author or organisation, title, year. Check it yourself first.' },
-        { name: 'source2', label: 'Source 2', kind: 'text', max: 140 },
+        { name: 'truth', label: 'The short answer (verdict slide)', kind: 'area', help: 'Plain language. One or two sentences, about 25 words.' },
+        { name: 'terms', label: 'Words to know (optional, one per line as: word: meaning)', kind: 'area', help: 'Two or three words a reader might not know. Keep each meaning to one short sentence.' },
+        { name: 'evidence1', label: 'Evidence slide 1 (optional)', kind: 'area', help: 'One finding, plain language, about 40 words.' },
+        { name: 'evidence2', label: 'Evidence slide 2 (optional)', kind: 'area', help: 'A second, different finding.' },
+        { name: 'origin', label: 'Where the myth came from (optional, keep it short)', kind: 'area', short: true, help: 'Two sentences at most.' },
+        { name: 'source1', label: 'Source 1: who (author and publisher)', kind: 'text', max: 90, help: 'For example: Avery Hurt, Discover Magazine. Check the source yourself first.' },
+        { name: 'source1t', label: 'Source 1: title and year', kind: 'text', max: 140 },
+        { name: 'source2', label: 'Source 2: who (author and publisher)', kind: 'text', max: 90 },
+        { name: 'source2t', label: 'Source 2: title and year', kind: 'text', max: 140 },
+        { name: 'srcnote', label: 'Note under the sources (leave empty for none)', kind: 'text', def: 'Links to both are in the full post.', max: 80 },
         { name: 'takeaway', label: 'One thing to remember', kind: 'area', short: true },
-        { name: 'author', label: 'Written by', kind: 'text', def: 'Anirudh Shukla', max: 60 },
+        { name: 'author', label: 'Written by', kind: 'select', options: MEMBERS, def: MEMBERS[0], help: 'The list comes from data/members.js.' },
+        { name: 'author2', label: 'Or another member (type a name, this replaces the choice above)', kind: 'text', max: 60 },
         { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'More myths on our Substack. Link in bio.', max: 120 },
         { name: 'link', label: 'Where to read more', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
       ],
@@ -203,6 +214,8 @@
       hint: 'Instagram Story frames, 1080 x 1920, with space kept clear at the top and bottom. Make the question frames on Friday (add a poll sticker in Instagram) and the answer frames on Saturday.',
       fields: [
         { name: 'series', label: 'Series name', kind: 'text', def: 'Weekly quiz', max: 40 },
+        { name: 'topic', label: 'Topic tag', kind: 'select', options: ['Neurology', 'Cardiology', 'Psychology', 'General'] },
+        { name: 'stickerh', label: 'Space kept clear for your poll sticker (under the options)', kind: 'select', options: [['0', 'None'], ['220', 'Small'], ['320', 'Medium'], ['420', 'Large']], def: '320', help: 'The sticker can be any size in Instagram; keep its width and height ratio and fit it in the empty band.' },
         { name: 'mode', label: 'Which frames', kind: 'select', options: [['both', 'Questions and answers'], ['questions', 'Questions only (Friday)'], ['answers', 'Answers only (Saturday)']] },
       ],
       custom: 'quiz',
@@ -400,10 +413,15 @@
     ctx.fillText('HealthBridge', PAD + 84, y + 34)
     ctx.fillStyle = t.ink2; ctx.font = '500 32px ' + SANS; ctx.textAlign = 'right'
     ctx.fillText(n + ' / ' + total, DIM.w - PAD, y + 34)
+    // the three topic colours (neurology, cardiology, psychology), on every slide of every maker
+    ;['#3d86b5', '#d0453f', '#d9a441'].forEach(function (c, k) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(DIM.w / 2 - 36 + k * 36, y + 34, 11, 0, 6.2832); ctx.fill() })
     ctx.textAlign = 'left'
   }
+  // a label's colour: the topic's colour if the label names one of the three topics, otherwise the brand green
+  function labelColour(t, label) { var k = ['Neurology', 'Cardiology', 'Psychology'].filter(function (x) { return String(label || '').indexOf(x) >= 0 })[0]; return k ? TOPIC[k].c : t.brand }
   function labelRule(ctx, t, label) {
-    ctx.fillStyle = t.brand; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'top'
+    var lc = labelColour(t, label)
+    ctx.fillStyle = lc; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'top'
     ctx.fillText(label, PAD, 120); ctx.fillRect(PAD, 190, 110, 8)
   }
 
@@ -414,7 +432,7 @@
     background(ctx, t); ctx.textAlign = 'left'
     var fits = true, inner = { w: W - 2 * PAD }
     if (s.kind === 'cover') {
-      ctx.fillStyle = t.brand; ctx.font = '600 36px ' + SANS; ctx.textBaseline = 'top'
+      ctx.fillStyle = labelColour(t, s.label); ctx.font = '600 36px ' + SANS; ctx.textBaseline = 'top'
       ctx.fillText(s.label, PAD, 150)
       var r = paragraph(ctx, s.text, PAD, 230, { w: inner.w, h: 620, max: 150, min: 64, weight: '400', family: SERIF, lh: 1.04 }, t.ink)
       fits = r.fits
@@ -426,6 +444,31 @@
     } else if (s.kind === 'list') {
       labelRule(ctx, t, s.label)
       fits = list(ctx, t, s.items, PAD, 270, { w: inner.w, h: 780, max: 66, min: 36, lh: 1.22 }, s.ordered)
+    } else if (s.kind === 'sources') {
+      // Small and tidy: each source is a number, then who (bold, sans) and the title under it (serif)
+      labelRule(ctx, t, s.label)
+      var sy = 270, ind = 70, who = 34, ttl = 38
+      ctx.textBaseline = 'top'
+      s.items.forEach(function (it, i) {
+        ctx.fillStyle = t.brand; ctx.font = '600 ' + ttl + 'px ' + SANS; ctx.fillText(String(i + 1), PAD, sy)
+        if (it.who) { ctx.fillStyle = t.ink; ctx.font = '600 ' + who + 'px ' + SANS; wrap(ctx, it.who, inner.w - ind).forEach(function (l) { ctx.fillText(l, PAD + ind, sy); sy += who * 1.3 }) }
+        if (it.title) { ctx.fillStyle = t.ink2; ctx.font = '400 ' + ttl + 'px ' + SERIF; wrap(ctx, it.title, inner.w - ind).forEach(function (l) { ctx.fillText(l, PAD + ind, sy); sy += ttl * 1.3 }) }
+        sy += 46
+      })
+      fits = sy <= 1010
+      if (s.note) { ctx.fillStyle = t.ink2; ctx.font = '500 30px ' + SANS; ctx.fillText(s.note, PAD, Math.max(sy + 10, 900)) }
+    } else if (s.kind === 'terms') {
+      // Each word in bold, its meaning under it
+      labelRule(ctx, t, s.label)
+      var ty = 270, tw = 40, tm = 44
+      ctx.textBaseline = 'top'
+      s.items.forEach(function (it) {
+        if (it.who) { ctx.fillStyle = t.brand; ctx.font = '600 ' + tw + 'px ' + SANS; ctx.fillText(it.who, PAD, ty); ty += tw * 1.4 }
+        ctx.fillStyle = t.ink; ctx.font = '400 ' + tm + 'px ' + SERIF
+        wrap(ctx, it.title, inner.w).forEach(function (l) { ctx.fillText(l, PAD, ty); ty += tm * 1.3 })
+        ty += 56
+      })
+      fits = ty <= 1060
     } else if (s.kind === 'verdict') {
       labelRule(ctx, t, 'Verdict')
       var col = s.verdict === 'Myth' ? t.bad : s.verdict === 'Partly true' || s.verdict === 'Not proven' ? t.mid : t.brand
@@ -453,34 +496,72 @@
     return fits
   }
 
-  // A story frame: the question with its options, or the same with the right answer marked and a reason.
+  // Topic colours (the same blue, red and amber as the site's model parts) and the symbols from the site's topic pages
+  var TOPIC = {
+    Neurology: { c: '#3d86b5', icon: new Path2D('M32 9c-5 0-8.5 3-9.5 6.5C17 15.5 13 19.5 13 25c0 3 1.2 5.5 3.2 7.2C14 34.5 13 37 13 40c0 5.5 4 9.5 9.5 9.5C23.5 53 27 55 32 55z M32 9c5 0 8.5 3 9.5 6.5C47 15.5 51 19.5 51 25c0 3-1.2 5.5-3.2 7.2C50 34.5 51 37 51 40c0 5.5-4 9.5-9.5 9.5C40.5 53 37 55 32 55 M23 24c3.5 0 5.5 2.2 5.5 5.5M23 40c3.5 0 5.5-2.2 5.5-5.5M41 24c-3.5 0-5.5 2.2-5.5 5.5M41 40c-3.5 0-5.5-2.2-5.5-5.5M32 9v46') },
+    Cardiology: { c: '#d0453f', icon: new Path2D('M32 55C16 43.5 8 33 8 23.5a12.5 12.5 0 0 1 24-4.5 12.5 12.5 0 0 1 24 4.5C56 33 48 43.5 32 55z M4 34h15l4.5-9 7 19 5-13 3.5 3H60') },
+    Psychology: { c: '#d9a441', icon: new Path2D('M23 56V46c-7-3.5-11-9.5-11-17.5C12 16.5 20.5 8 32 8s20 8 20 19c0 4-1.2 7-3.2 10l4 7-7.5 2.5V56z M26 29a6 6 0 0 1 12 0M21.5 29a10.5 10.5 0 0 1 21 0M32 29v.1') },
+  }
+  // A story frame: the question with its options (Friday), or the right answer, the others dimmed, and why (Saturday).
+  // The "sticker space" setting keeps a clear band under the options for Instagram's poll sticker.
   function drawQuiz(ctx, t, s, d) {
-    var W = DIM.w, top = DIM.top, ask = s.kind === 'qs', fits = true
+    var W = DIM.w, top = DIM.top, ask = s.kind === 'qs', fits = true, inW = W - 2 * PAD
+    var brandY = DIM.h - DIM.bottom - 68, limit = brandY - (ask ? 130 : 40) // the question frame keeps room for the heartbeat line
+    var tp = TOPIC[d.topic], acc = tp ? tp.c : t.brand
     ctx.textBaseline = 'top'; ctx.textAlign = 'left'
     ctx.fillStyle = t.brand; ctx.font = '600 34px ' + SANS; ctx.fillText(d.series, PAD, top + 20)
-    ctx.fillStyle = t.ink2; ctx.textAlign = 'right'; ctx.fillText((ask ? 'Question ' : 'Answer ') + s.i + ' of ' + s.of, W - PAD, top + 20); ctx.textAlign = 'left'
-    var q = paragraph(ctx, s.q, PAD, top + 110, { w: W - 2 * PAD, h: ask ? 430 : 280, max: ask ? 84 : 56, min: 36, weight: '400', family: SERIF, lh: 1.12 }, t.ink)
+    if (s.of > 1) { ctx.fillStyle = t.ink2; ctx.textAlign = 'right'; ctx.font = '500 34px ' + SANS; ctx.fillText((ask ? 'Question ' : 'Answer ') + s.i + ' of ' + s.of, W - PAD, top + 20); ctx.textAlign = 'left' }
+    if (tp) {
+      // the topic's symbol from the site, then the topic name in its colour
+      ctx.save(); ctx.translate(PAD, top + 66); ctx.scale(1.05, 1.05); ctx.strokeStyle = acc; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(tp.icon); ctx.restore()
+      ctx.fillStyle = acc; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'middle'; ctx.fillText(d.topic.toUpperCase(), PAD + 84, top + 66 + 34); ctx.textBaseline = 'top'
+    }
+    var opts = LETTERS.map(function (l, k) { return { l: l, text: s.opts[k] } }).filter(function (o) { return o.text })
+    var n = opts.length, gap = ask ? 16 : 12
+    var q = paragraph(ctx, s.q, PAD, top + 170, { w: inW, h: ask ? 200 : 200, max: ask ? 58 : 48, min: 32, weight: '400', family: SERIF, lh: 1.12 }, t.ink)
     fits = q.fits
-    var y = top + (ask ? 600 : 420), oh = ask ? 132 : 112, gap = ask ? 22 : 14, tw = W - 2 * PAD - (ask ? 130 : 270)
-    LETTERS.forEach(function (l, k) {
-      var text = s.opts[k]; if (!text) return
-      var right = !ask && l === s.ans, dim = !ask && !right
-      ctx.save(); if (dim) ctx.globalAlpha = 0.6
-      rr(ctx, PAD, y, W - 2 * PAD, oh, 18)
-      if (right) { ctx.fillStyle = t.brand; ctx.fill() } else { ctx.fillStyle = hexA(t.brand, 0.08); ctx.fill(); ctx.strokeStyle = ask ? t.brand : hexA(t.ink, 0.3); ctx.lineWidth = 3; ctx.stroke() }
-      ctx.fillStyle = right ? t.bg : t.brand; ctx.font = '600 40px ' + SANS; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-      ctx.fillText(l, PAD + 52, y + oh / 2 + 2)
+    var y = top + (ask ? 390 : 400)
+    // one text size for a whole group of options, so they all match: the largest size at which every one fits its box
+    function commonSize(texts, w, h, max, min) {
+      for (var sz = max; sz >= min; sz -= 2) {
+        ctx.font = '500 ' + sz + 'px ' + SANS
+        if (texts.every(function (x) { return wrap(ctx, x, w).length * sz * 1.15 <= h })) return sz
+      }
+      return min
+    }
+    function box(o, h, big, size) {
+      var right = !ask && o.l === s.ans, dim = !ask && !right
+      ctx.save(); if (dim) ctx.globalAlpha = 0.5
+      rr(ctx, PAD, y, inW, h, 18)
+      if (right) { ctx.fillStyle = acc; ctx.fill() } else { ctx.fillStyle = hexA(acc, 0.1); ctx.fill(); ctx.strokeStyle = ask ? acc : hexA(t.ink, 0.3); ctx.lineWidth = 3; ctx.stroke() }
+      var lf = Math.min(46, Math.round(h * 0.4))
+      ctx.fillStyle = right ? t.bg : acc; ctx.font = '600 ' + lf + 'px ' + SANS; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      ctx.fillText(o.l, PAD + 52, y + h / 2 + 2)
       ctx.textAlign = 'left'
-      var o = paragraph(ctx, text, PAD + 100, y + 12, { w: tw, h: oh - 24, max: 42, min: 26, weight: '500', family: SANS, lh: 1.2, centre: 0.5 }, right ? t.bg : t.ink)
-      if (!o.fits) fits = false
-      if (right) { ctx.fillStyle = t.bg; ctx.font = '600 28px ' + SANS; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('Correct', W - PAD - 28, y + oh / 2 + 2); ctx.textAlign = 'left' }
+      var tw = inW - 100 - (right ? 190 : 30)
+      var r = paragraph(ctx, o.text, PAD + 100, y + 8, { w: tw, h: h - 16, max: size, min: right ? 22 : size, weight: right ? '600' : '500', family: SANS, lh: 1.15, centre: 0.5 }, right ? t.bg : t.ink)
+      if (!r.fits) fits = false
+      if (right) { ctx.fillStyle = t.bg; ctx.font = '700 34px ' + SANS; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('Correct', W - PAD - 28, y + h / 2 + 2); ctx.textAlign = 'left' }
       ctx.restore()
-      y += oh + gap
-    })
-    if (!ask && s.why) {
-      ctx.fillStyle = t.brand; ctx.font = '600 32px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText('Why', PAD, y + 20)
-      var w = paragraph(ctx, s.why, PAD, y + 70, { w: W - 2 * PAD, h: DIM.h - DIM.bottom - 68 - 30 - (y + 70), max: 40, min: 28, weight: '400', family: SANS, lh: 1.3 }, t.ink2)
-      if (!w.fits) fits = false
+      y += h + gap
+    }
+    if (ask) {
+      var band = parseInt(d.stickerh, 10) || 0
+      var avail = limit - band - y
+      var oh = Math.min(150, Math.floor((avail - (n - 1) * gap) / n))
+      if (oh < 60) fits = false
+      var qsz = commonSize(opts.map(function (o) { return o.text }), inW - 130, Math.max(oh, 40) - 16, 46, 22)
+      opts.forEach(function (o) { box(o, Math.max(oh, 40), true, qsz) })
+      // the site's heartbeat-to-brain-wave line, in the topic colour, above the logo
+      ctx.save(); ctx.translate(PAD, brandY - 118); ctx.scale((DIM.w - 2 * PAD) / 1200, 0.9); ctx.strokeStyle = acc; ctx.lineWidth = 6 / 1.1; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.globalAlpha = 0.9; ctx.stroke(TRACE); ctx.restore()
+    } else {
+      var wsz = commonSize(opts.filter(function (o) { return o.l !== s.ans }).map(function (o) { return o.text }), inW - 130, 74 - 16, 34, 20)
+      opts.forEach(function (o) { box(o, o.l === s.ans ? 150 : 74, o.l === s.ans, o.l === s.ans ? 52 : wsz) })
+      if (s.why) {
+        ctx.fillStyle = acc; ctx.font = '600 34px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText('WHY', PAD, y + 24)
+        var w = paragraph(ctx, s.why, PAD, y + 80, { w: inW, h: limit - (y + 80), max: 56, min: 28, weight: '400', family: SERIF, lh: 1.25 }, t.ink)
+        if (!w.fits) fits = false
+      }
     }
     return fits
   }
@@ -498,7 +579,7 @@
       if (body.length > MAX_BODY) notes.push('Instagram allows 10 slides, so only the first ' + MAX_BODY + ' of your ' + body.length + ' are used. Cut or merge some.')
       longWords(body, 2, notes)
       body = body.slice(0, MAX_BODY)
-      var out = [{ kind: 'cover', label: v.category, text: v.title || 'Your title goes here', by: 'By ' + (v.author || 'HealthBridge'), deco: 'trace' }]
+      var out = [{ kind: 'cover', label: v.category, text: v.title || 'Your title goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: 'trace' }]
       body.forEach(function (s) { out.push({ kind: 'text', label: v.category, text: s }) })
       out.push({ kind: 'end', heading: ['Read the full', 'article'], text: v.closing || 'The full article is on our Substack.', link: v.link, deco: 'trace' })
       return { slides: out, ready: !!v.title && body.length > 0, name: v.title, need: 'Write a title and at least one slide to download.' }
@@ -520,13 +601,19 @@
       return { slides: out, ready: !!v.title && !!v.results.trim(), name: v.title, need: 'Write the question and the results to download.' }
     },
     mythbuster: function (v, notes) {
-      var src = [v.source1, v.source2].filter(function (s) { return s.trim() })
+      var src = [{ who: v.source1, title: v.source1t }, { who: v.source2, title: v.source2t }].filter(function (s) { return s.who.trim() || s.title.trim() })
       if (v.myth.trim() && src.length < 2) notes.push('A MythBuster needs two sources you have checked yourself. You have ' + src.length + '.')
       longWords([v.truth].filter(Boolean), 3, notes, 55)
-      var out = [{ kind: 'cover', label: 'MythBuster, ' + v.category, text: v.myth ? '“' + v.myth.trim() + '”' : 'The myth goes here', by: 'By ' + (v.author || 'HealthBridge'), deco: 'trace' }]
+      var out = [{ kind: 'cover', label: 'MythBuster, ' + v.category, text: v.myth ? '“' + v.myth.trim() + '”' : 'The myth goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: 'trace' }]
       out.push({ kind: 'verdict', verdict: v.verdict, text: v.truth.trim() || 'What the evidence shows goes here.' })
-      if (src.length) out.push({ kind: 'list', label: 'Sources', items: src.map(function (s) { return s.trim() }), ordered: false })
+      var terms = v.terms.split('\n').map(function (l) { return l.trim() }).filter(Boolean).slice(0, 4).map(function (l) { var i = l.indexOf(':'); return i > 0 ? { who: l.slice(0, i).trim(), title: l.slice(i + 1).trim() } : { who: '', title: l } })
+      if (terms.length) out.push({ kind: 'terms', label: 'Words to know', items: terms })
+      var ev = [v.evidence1, v.evidence2].filter(function (e) { return e.trim() })
+      longWords(ev, 3, notes, 55)
+      ev.forEach(function (e, i) { out.push({ kind: 'text', label: ev.length > 1 ? 'Evidence ' + (i + 1) + ' of ' + ev.length : 'Evidence', text: e.trim() }) })
+      if (v.origin.trim()) out.push({ kind: 'text', label: 'Where it came from', text: v.origin.trim() })
       if (v.takeaway.trim()) out.push({ kind: 'text', label: 'What to remember', text: v.takeaway.trim() })
+      if (src.length) out.push({ kind: 'sources', label: 'Sources', items: src.map(function (s) { return { who: s.who.trim(), title: s.title.trim() } }), note: v.srcnote.trim() })
       out.push({ kind: 'end', heading: ['Read the', 'full story'], text: v.closing || 'More myths on our Substack.', link: v.link, deco: 'trace' })
       return { slides: out, ready: !!v.myth.trim() && !!v.truth.trim(), name: v.myth, need: 'Write the myth and what the evidence shows to download.' }
     },
@@ -580,9 +667,37 @@
     }, 'image/png')
   }
 
+  // Preview: a big, full-size look at one slide before downloading (works for every maker)
+  var pv = null
+  function openPreview(canvases, i) {
+    if (!pv) {
+      var o = document.createElement('div'); o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-label', 'Slide preview')
+      o.style.cssText = 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:16px'
+      var img = document.createElement('img'); img.alt = 'Preview of the slide'; img.style.cssText = 'max-width:100%;max-height:calc(100vh - 110px);object-fit:contain;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.6)'
+      var bar = document.createElement('div'); bar.style.cssText = 'display:flex;gap:10px;align-items:center;color:#e9f3ef;font:500 15px system-ui,sans-serif'
+      function mk(t, f) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-line'; b.textContent = t; b.addEventListener('click', f); return b }
+      var lab = document.createElement('span'); lab.style.minWidth = '90px'; lab.style.textAlign = 'center'
+      pv = { o: o, img: img, lab: lab, i: 0, list: [], prev: mk('Back', function () { show(pv.i - 1) }), next: mk('Next', function () { show(pv.i + 1) }), close: mk('Close', function () { hide() }) }
+      bar.appendChild(pv.prev); bar.appendChild(lab); bar.appendChild(pv.next); bar.appendChild(pv.close)
+      o.appendChild(img); o.appendChild(bar); document.body.appendChild(o)
+      o.addEventListener('click', function (e) { if (e.target === o) hide() })
+      document.addEventListener('keydown', function (e) {
+        if (o.style.display === 'none') return
+        if (e.key === 'Escape') hide(); else if (e.key === 'ArrowLeft') show(pv.i - 1); else if (e.key === 'ArrowRight') show(pv.i + 1)
+      })
+    }
+    function show(n) {
+      if (n < 0 || n >= pv.list.length) return
+      pv.i = n; pv.img.src = pv.list[n].toDataURL('image/png'); pv.lab.textContent = 'Slide ' + (n + 1) + ' of ' + pv.list.length
+      pv.prev.disabled = n === 0; pv.next.disabled = n === pv.list.length - 1
+    }
+    function hide() { pv.o.style.display = 'none'; if (pv.opener) pv.opener.focus() }
+    pv.list = canvases; pv.opener = document.activeElement; pv.o.style.display = 'flex'; show(i); pv.close.focus()
+  }
+
   var timer = 0
   function schedule() { clearTimeout(timer); timer = setTimeout(render, 120); save() }
-  function summary(s) { return s.text || s.q || s.verdict || (s.items || []).join('. ') || s.label || '' }
+  function summary(s) { return s.text || s.q || s.verdict || (s.items || []).map(function (i) { return typeof i === 'string' ? i : [i.who, i.title].filter(Boolean).join(', ') }).join('. ') || s.label || '' }
   async function render() {
     await logoReady
     var type = currentType(), d = read(type), notes = []
@@ -597,11 +712,16 @@
       var cv = document.createElement('canvas'); cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + summary(s))
       if (!draw(cv, s, i + 1, total, d)) notes.push('Slide ' + (i + 1) + ' is too long to fit even at the smallest size. Shorten it.')
       var row = document.createElement('div'); row.className = 'row2'
-      var label = document.createElement('span'); label.textContent = 'Slide ' + (i + 1) + ' of ' + total
+      var label = document.createElement('span'); label.textContent = 'Slide ' + (i + 1) + ' of ' + total; label.style.whiteSpace = 'nowrap'; row.style.flexWrap = 'wrap'; row.style.gap = '8px'
       var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn btn-line'; btn.textContent = 'Download'; btn.disabled = !b.ready
       btn.setAttribute('aria-label', 'Download slide ' + (i + 1))
       btn.addEventListener('click', function () { download(cv, file(i)) })
-      row.appendChild(label); row.appendChild(btn); fig.appendChild(cv); fig.appendChild(row); deck.appendChild(fig); canvases.push(cv)
+      var look = document.createElement('button'); look.type = 'button'; look.className = 'btn btn-line'; look.textContent = 'Preview'
+      look.setAttribute('aria-label', 'Preview slide ' + (i + 1))
+      look.addEventListener('click', function () { openPreview(canvases, i) })
+      cv.style.cursor = 'zoom-in'; cv.addEventListener('click', function () { openPreview(canvases, i) })
+      var btns = document.createElement('span'); btns.style.cssText = 'display:flex;gap:8px'; btns.appendChild(look); btns.appendChild(btn)
+      row.appendChild(label); row.appendChild(btns); fig.appendChild(cv); fig.appendChild(row); deck.appendChild(fig); canvases.push(cv)
     })
     allBtn.disabled = !b.ready
     allBtn.onclick = function () { canvases.forEach(function (cv, i) { setTimeout(function () { download(cv, file(i)) }, i * 350) }) }
@@ -680,6 +800,8 @@
       fields: [
         { name: 'date', label: 'Date it was posted (year-month-day)', kind: 'text', def: iso, max: 10 },
         { name: 'title', label: 'Title', kind: 'text', def: 'Brain Myth of the Week: ', max: 120 },
+        { name: 'author', label: 'Written by', kind: 'select', options: MEMBERS, def: MEMBERS[0] },
+        { name: 'author2', label: 'Or another member (type a name, this replaces the choice above)', kind: 'text', max: 60 },
         { name: 'claim', label: 'The myth, as people usually say it', kind: 'area', short: true },
         { name: 'verdict', label: 'Verdict', kind: 'select', options: ['Myth', 'Fact', 'Partly true'] },
         { name: 'explanation', label: 'What the research shows', kind: 'area' },
@@ -692,7 +814,7 @@
         var src = [[v.s1l, v.s1u], [v.s2l, v.s2u]].filter(function (s) { return s[0] || s[1] })
         if (src.some(function (s) { return !s[0] || !/^https?:\/\//.test(s[1]) })) n.push('Each source needs a name and a full link that starts with https://.')
         else if (src.length < 2) n.push('A MythBuster needs two sources you have checked yourself. You have ' + src.length + '.')
-        var out = ['    {', '      date: ' + js(v.date) + ',', '      title: ' + js(v.title) + ',', '      claim: ' + js(v.claim) + ',', '      verdict: ' + js(v.verdict) + ',', '      explanation: ' + js(v.explanation) + ',']
+        var out = ['    {', '      date: ' + js(v.date) + ',', '      title: ' + js(v.title) + ',', '      author: ' + js(v.author2 || v.author) + ',', '      claim: ' + js(v.claim) + ',', '      verdict: ' + js(v.verdict) + ',', '      explanation: ' + js(v.explanation) + ',']
         out.push('      sources: [')
         src.forEach(function (s) { out.push('        { label: ' + js(s[0]) + ', url: ' + js(s[1]) + ' },') })
         out.push('      ],')

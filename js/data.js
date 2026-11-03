@@ -67,6 +67,9 @@ window.HB_DATA = (function () {
     { term: 'Self-esteem', category: 'Psychology', definition: "Your overall evaluation of your own worth. Healthy self-esteem means accepting yourself while recognizing areas for growth. It's not arrogance—it's self-respect and confidence." },
     { term: 'Stress and coping', category: 'Psychology', definition: "Stress is your body's response to challenges. Some stress is normal and motivating, but chronic stress harms health. Learning healthy coping strategies (exercise, talking, hobbies) is essential." },
     { term: 'Mental health vs mental illness', category: 'Psychology', definition: 'Mental health is a spectrum. Everyone has mental health, just like physical health. Mental illness (depression, anxiety, etc.) is treatable. Seeking help is a sign of strength, not weakness.' },
+    { term: 'fMRI', category: 'Neurology', definition: 'A brain scan (functional magnetic resonance imaging) that shows which parts of the brain are more active at a given moment.' },
+    { term: 'Epilepsy', category: 'Neurology', definition: 'A condition where the brain sometimes has sudden bursts of abnormal activity, called seizures.' },
+    { term: 'Neuroscientist', category: 'Neurology', definition: 'A scientist who studies the brain and nervous system.' },
     { term: 'Growth mindset', category: 'Psychology', definition: 'Believing your abilities can be developed through effort and practice. People with growth mindsets embrace challenges, learn from failures, and achieve more than those with fixed mindsets.' },
   ]
 

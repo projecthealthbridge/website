@@ -134,7 +134,7 @@
         w.quiz.forEach(function (q) { inside.push(el('p', { text: q.q + ' ' + q.options[q.answer] + '.' })) })
       }
       var details = el('details', {}, [el('summary', { text: 'Show the answer' })].concat(inside))
-      box.appendChild(el('article', { class: 'weekly' }, [el('time', { datetime: w.date, text: niceDate(w.date) }), el('h2', { text: w.title }), el('p', { text: 'The claim: ' + w.claim }), details]))
+      box.appendChild(el('article', { class: 'weekly' }, [el('time', { datetime: w.date, text: niceDate(w.date) }), el('h2', { text: w.title })].concat(w.author ? [el('p', { class: 'row-by', text: 'By ' + w.author })] : [], [el('p', { text: 'The claim: ' + w.claim }), details])))
     })
   })
 
