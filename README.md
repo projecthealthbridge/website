@@ -1,12 +1,12 @@
 # Project HealthBridge
 
-The website for Project HealthBridge, a student-led health innovation lab: articles, the brain, the heart and the mind in plain language, our experiment plans, a quiz and a BMI check. Plain HTML, CSS and JavaScript. No build step, no accounts, nothing is stored or sent anywhere.
+The website for Project HealthBridge, a student-led initiative fighting medical misinformation among teenagers: articles, MythBusters, a quiz, a glossary and 3D models of the brain and the heart, in plain language. Plain HTML, CSS and JavaScript. No build step, no accounts, nothing is stored or sent anywhere.
 
 ## Run it
 
 ```
 npm start        # http://localhost:8090
-npm test         # 15 tests: BMI and quiz maths, the quiz data, and the Substack feed reader
+npm test         # 19 tests: quiz maths, the quiz data, and the Substack feed reader
 npm run update   # pull the latest posts from Substack now
 ```
 
@@ -41,7 +41,7 @@ This needs the site to be on GitHub Pages in a GitHub repository (see below). Ru
 | Contact email | `data-to` on the form in `index.html` |
 | A post's category | `data/categories.json` |
 | A one-line summary under an article (write it yourself) | `data/summaries.js` |
-| A new Brain Myth of the Week and quiz | `data/weekly.js` (the template is in the file) |
+| A new MythBuster and quiz | `data/weekly.js` (the template is in the file) |
 | A glossary term | `GLOSSARY` in `js/data.js` |
 | A source on the reading list | `reading-list.html` |
 
