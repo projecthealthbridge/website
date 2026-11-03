@@ -30,6 +30,7 @@ const I = {
   check: stroke('<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.5"/>'),
   people: stroke('<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>'),
   mic: stroke('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>'),
+  book: stroke('<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11M9 8h6"/>'),
   video: stroke('<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/>'),
   bolt: stroke('<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>'),
   lock: stroke('<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'),
@@ -79,7 +80,7 @@ const footer = `
         <a class="brand" href="index.html"><img src="assets/logo-192.png" alt="" width="37" height="37"><span>HealthBridge</span></a>
         <p style="margin-top:1rem;max-width:30ch">A student-led health awareness project in Singapore.</p>
       </div>
-      <div><h2>Read</h2><ul><li><a href="articles.html">Articles</a></li><li><a href="papers.html">Papers</a></li><li><a href="weekly.html">Weekly</a></li><li><a href="experiments.html">Experiments</a></li><li><a href="quiz.html">Quiz</a></li><li><a href="${SUBSTACK}" target="_blank" rel="noopener">Substack</a></li></ul></div>
+      <div><h2>Read</h2><ul><li><a href="articles.html">Articles</a></li><li><a href="papers.html">Papers</a></li><li><a href="weekly.html">MythBusters</a></li><li><a href="experiments.html">Experiments</a></li><li><a href="quiz.html">Quiz</a></li><li><a href="${SUBSTACK}" target="_blank" rel="noopener">Substack</a></li></ul></div>
       <div><h2>Explore</h2><ul><li><a href="neurology.html">Neurology</a></li><li><a href="cardiology.html">Cardiology</a></li><li><a href="psychology.html">Psychology</a></li><li><a href="glossary.html">Glossary</a></li><li><a href="reading-list.html">Reading list</a></li><li><a href="about.html">About</a></li><li><a href="index.html#join">Join us</a></li></ul></div>
       <div><h2>Need help now?</h2>
         <ul class="help">
@@ -267,8 +268,10 @@ ${ANATOMY}
     <div class="index">
       <a class="item" href="experiments.html">${I.flask}<div><h3>Experiments</h3><p>The experiments we are planning, and how we aim to run them safely.</p></div></a>
       <a class="item" href="quiz.html">${I.check}<div><h3>Quiz</h3><p>Test your knowledge with multiple-choice questions.</p></div></a>
+      <a class="item" href="glossary.html">${I.book}<div><h3>Glossary</h3><p>Plain-language meanings of the brain, heart and mind words we use.</p></div></a>
       <a class="item" href="articles.html">${I.doc}<div><h3>Articles</h3><p>Articles and literature reviews written by our team on neurology, cardiology and psychology.</p></div></a>
       <a class="item" href="#contact">${I.people}<div><h3>Connect</h3><p>Send us a message, or follow us on Substack, Instagram and LinkedIn.</p></div></a>
+      <a class="item" href="weekly.html">${I.check}<div><h3>MythBusters</h3><p>One health myth checked against two real sources, every Wednesday, plus a quiz every Friday.</p><span class="status">Coming soon</span></div></a>
       <div class="item soon">${I.mic}<div><h3>MedTalk</h3><p>Our podcast: medical talk with evidence-based information.</p><span class="status">Coming soon</span></div></div>
       <div class="item soon">${I.bolt}<div><h3>Knowledge in Motion</h3><p>1-minute educational videos on health topics.</p><span class="status">Coming soon</span></div></div>
     </div>
@@ -556,7 +559,7 @@ write('library.html', page({
 <section class="block"><div class="wrap">
   <div class="index">
     <a class="item" href="papers.html">${I.doc}<div><h3>Papers</h3><p>Research papers and literature reviews.</p></div></a>
-    <a class="item" href="weekly.html">${I.check}<div><h3>Weekly</h3><p>Brain Myth of the Week and the weekly quiz, with every answer.</p><span class="status">Coming soon</span></div></a>
+    <a class="item" href="weekly.html">${I.check}<div><h3>MythBusters</h3><p>One health myth checked against two sources, plus the weekly quiz with every answer.</p><span class="status">Coming soon</span></div></a>
     <a class="item" href="interviews.html">${I.people}<div><h3>Interviews</h3><p>Conversations with the people who work in health.</p><span class="status">Coming soon</span></div></a>
     <a class="item" href="guest-posts.html">${I.doc}<div><h3>Guest posts</h3><p>Write for HealthBridge.</p></div></a>
     <a class="item" href="reading-list.html">${I.doc}<div><h3>Reading list</h3><p>The sources behind our papers.</p></div></a>
@@ -584,12 +587,12 @@ write('papers.html', page({
 /* Weekly: the archive. Empty until the first entry is added to data/weekly.js */
 write('weekly.html', page({
   current: 'library.html',
-  title: 'Weekly | Project HealthBridge',
-  desc: 'Brain Myth of the Week and the weekly quiz from Project HealthBridge, with every answer.',
-  body: `${head('Weekly', 'Brain Myth of the Week and the weekly quiz. One myth, two sources, plain language.')}
+  title: 'MythBusters | Project HealthBridge',
+  desc: 'MythBusters and the weekly quiz from Project HealthBridge, with every answer.',
+  body: `${head('MythBusters', 'One health myth, two sources, plain language, plus the weekly quiz.')}
 <section class="block"><div class="wrap">
   <div data-weekly></div>
-  <div class="coming" data-weekly-empty><span class="status">Coming soon</span><h2>The first Brain Myth of the Week is on its way</h2><p>Each week we take one myth about the brain, check it against the research, and post the answer with a short quiz. Every past week will be kept here.</p><p><a class="link" href="quiz.html">Try the quiz in the meantime ${I.arrow}</a></p></div>
+  <div class="coming" data-weekly-empty><span class="status">Coming soon</span><h2>The first MythBuster is on its way</h2><p>We take one health myth about the brain, the mind or the heart, check it against the research, and post the answer with two sources. Coming up: a MythBuster on Wednesdays (every second Wednesday for now) and a quiz every Friday, with the answer on Saturday. Every past one will be kept here.</p><p><a class="link" href="quiz.html">Try the quiz in the meantime ${I.arrow}</a></p></div>
 </div></section>`,
 }))
 

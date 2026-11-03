@@ -3,6 +3,22 @@
 ;(function () {
   'use strict'
   var data = window.HB_DATA || {}
+
+  /* Arriving on a link such as index.html#join: the page keeps growing and shrinking while it loads (articles, the 3D
+     models), which left the visitor far from the section. Put the section back under the header a few times while the
+     page settles, and stop at once if the visitor scrolls themselves. */
+  if (location.hash.length > 1) {
+    var hashTarget = null
+    try { hashTarget = document.getElementById(decodeURIComponent(location.hash.slice(1))) } catch (err) { /* not a valid id */ }
+    if (hashTarget) {
+      var hashDone = false
+      var stopHash = function () { hashDone = true }
+      ;['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (n) { window.addEventListener(n, stopHash, { passive: true, once: true }) })
+      var realign = function () { if (!hashDone) hashTarget.scrollIntoView({ behavior: 'instant', block: 'start' }) }
+      window.addEventListener('load', realign)
+      ;[300, 900, 1800, 3000].forEach(function (ms) { setTimeout(function () { realign(); if (ms === 3000) hashDone = true }, ms) })
+    }
+  }
   var Health = window.Health
 
   function el(tag, attrs, children) {
