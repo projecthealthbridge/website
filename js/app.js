@@ -272,35 +272,22 @@
     show()
   }
 
-  /* The 3D brain and heart. The tabs and the list work on their own; the 3D view (js/anatomy.js and a
+  /* The 3D brain and the 3D heart, side by side. The list works on its own; the 3D view (js/anatomy.js and a
      saved copy of Three.js) is only fetched when this part of the page is about to be seen. */
-  var anat = document.querySelector('[data-anatomy]')
-  if (anat) {
-    var lists = anat.querySelectorAll('ul[data-model]')
-    var modelTabs = anat.querySelectorAll('[data-model-tabs] button')
-    var showModel = function (id) {
-      lists.forEach(function (l) { l.hidden = l.getAttribute('data-model') !== id })
-      modelTabs.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-model') === id)) })
-      anat.querySelectorAll('[data-art]').forEach(function (a) { a.hidden = a.getAttribute('data-art') !== id })
-      anat.setAttribute('data-current', id)
-      anat.dispatchEvent(new CustomEvent('anatomy:model', { detail: id }))
-    }
-    modelTabs.forEach(function (b) { b.addEventListener('click', function () { showModel(b.getAttribute('data-model')) }) })
-    showModel('brain')
-    if ('IntersectionObserver' in window) {
-      var anatIO = new IntersectionObserver(function (es) {
-        if (!es[0].isIntersecting) return
-        anatIO.disconnect()
-        anat.setAttribute('data-loading', '')
-        import('./anatomy.js').then(function (m) { return m.init(anat) }).catch(function (err) {
-          anat.removeAttribute('data-loading')
-          anat.setAttribute('data-failed', '')
-          if (window.console) console.warn('3D view unavailable:', err && err.message)
-        })
-      }, { rootMargin: '500px' })
-      anatIO.observe(anat)
-    }
-  }
+  document.querySelectorAll('[data-anatomy]').forEach(function (anat) {
+    if (!('IntersectionObserver' in window)) return
+    var anatIO = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return
+      anatIO.disconnect()
+      anat.setAttribute('data-loading', '')
+      import('./anatomy.js').then(function (m) { return m.init(anat) }).catch(function (err) {
+        anat.removeAttribute('data-loading')
+        anat.setAttribute('data-failed', '')
+        if (window.console) console.warn('3D view unavailable:', err && err.message)
+      })
+    }, { rootMargin: '500px' })
+    anatIO.observe(anat)
+  })
 
   /* Substack sign-up form: Substack's own form, loaded only when someone asks for it. Without JavaScript the
      button is just a link to Substack's subscribe page. */

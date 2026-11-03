@@ -81,17 +81,15 @@
   </div>
 </section>
 
-<section class="block" id="anatomy" aria-labelledby="anat-title" data-anatomy data-current="brain">
-  <div class="wrap">
+<section class="block" id="anatomy" aria-labelledby="anat-title">
+  <div class="wrap wide">
     <div class="head"><h2 id="anat-title">Inside the brain and the heart</h2><p>Pull each one apart to see its working parts. Tap a part, or its name in the list, to read what it does.</p></div>
-    <div class="tabs" data-model-tabs role="group" aria-label="Choose a model">
-      <button class="tab" type="button" data-model="brain" aria-pressed="true">The brain</button>
-      <button class="tab" type="button" data-model="heart" aria-pressed="false">The heart</button>
-    </div>
-    <div class="anatomy">
+    <div class="anatomy-pair">
+    <div class="anat" data-anatomy data-single data-current="brain">
+      <h3 class="anat-title">The brain</h3>
       <div class="stage">
         <div class="stage-view" data-stage>
-          <div class="stage-art" data-fallback><div data-art="brain"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 9c-5 0-8.5 3-9.5 6.5C17 15.5 13 19.500 13 25c0 3 1.200 5.500 3.200 7.200C14 34.500 13 37 13 40c0 5.500 4 9.500 9.500 9.500C23.500 53 27 55 32 55z"/><path d="M32 9c5 0 8.500 3 9.500 6.500C47 15.500 51 19.500 51 25c0 3-1.200 5.500-3.200 7.200C50 34.500 51 37 51 40c0 5.500-4 9.500-9.500 9.500C40.500 53 37 55 32 55"/><path d="M23 24c3.500 0 5.500 2.200 5.500 5.500M23 40c3.500 0 5.500-2.200 5.500-5.500M41 24c-3.500 0-5.500 2.200-5.500 5.500M41 40c-3.500 0-5.500-2.200-5.500-5.500M32 9v46"/></svg></div><div data-art="heart" hidden><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 55C16 43.500 8 33 8 23.500a12.500 12.500 0 0 1 24-4.500 12.500 12.500 0 0 1 24 4.500C56 33 48 43.500 32 55z"/><path d="M4 34h15l4.500-9 7 19 5-13 3.500 3H60"/></svg></div></div>
+          <div class="stage-art" data-fallback><div data-art="brain"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 9c-5 0-8.5 3-9.5 6.5C17 15.5 13 19.500 13 25c0 3 1.200 5.500 3.200 7.200C14 34.500 13 37 13 40c0 5.500 4 9.500 9.500 9.500C23.500 53 27 55 32 55z"/><path d="M32 9c5 0 8.500 3 9.500 6.500C47 15.500 51 19.500 51 25c0 3-1.200 5.500-3.200 7.200C50 34.500 51 37 51 40c0 5.500-4 9.500-9.500 9.500C40.500 53 37 55 32 55"/><path d="M23 24c3.500 0 5.500 2.200 5.500 5.500M23 40c3.500 0 5.500-2.200 5.500-5.500M41 24c-3.500 0-5.500 2.200-5.500 5.500M41 40c-3.500 0-5.500-2.200-5.500-5.500M32 9v46"/></svg></div></div>
           <canvas data-canvas tabindex="0" role="img" aria-label="Interactive 3D model, split into its parts. Drag to turn it, or use the arrow keys. The list beside it describes every part."></canvas>
           <div class="labels" data-labels></div>
           <p class="stage-loading" role="status">Loading the 3D model</p>
@@ -114,7 +112,26 @@
         <li><button class="part" type="button" data-part="hippocampus" aria-expanded="false"><span class="swatch" style="--c:#8e7cc3" aria-hidden="true"></span><span class="part-name">Hippocampus</span></button><p class="part-fn">Turns what you experience into new long-term memories.</p></li>
         <li><button class="part" type="button" data-part="amygdala" aria-expanded="false"><span class="swatch" style="--c:#e0845f" aria-hidden="true"></span><span class="part-name">Amygdala</span></button><p class="part-fn">Spots threats and drives fear and other strong emotions. It also helps attach emotion to memories.</p></li>
       </ul>
-      <ul class="part-list" data-model="heart" hidden>
+      </div>
+    </div>
+    <div class="anat" data-anatomy data-single data-current="heart">
+      <h3 class="anat-title">The heart</h3>
+      <div class="stage">
+        <div class="stage-view" data-stage>
+          <div class="stage-art" data-fallback><div data-art="heart"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 55C16 43.500 8 33 8 23.500a12.500 12.500 0 0 1 24-4.500 12.500 12.500 0 0 1 24 4.500C56 33 48 43.500 32 55z"/><path d="M4 34h15l4.500-9 7 19 5-13 3.500 3H60"/></svg></div></div>
+          <canvas data-canvas tabindex="0" role="img" aria-label="Interactive 3D model, split into its parts. Drag to turn it, or use the arrow keys. The list beside it describes every part."></canvas>
+          <div class="labels" data-labels></div>
+          <p class="stage-loading" role="status">Loading the 3D model</p>
+        </div>
+        <div class="stage-tools">
+          <label class="explode"><span>Together</span><input type="range" min="0" max="100" value="0" data-explode><span>Apart</span></label>
+          <button class="stage-btn" type="button" data-apart>Pull apart</button>
+          <button class="stage-btn" type="button" data-reset>Reset</button>
+        </div>
+        <p class="sr-only" role="status" aria-live="polite" data-status></p>
+      </div>
+      <div class="parts">
+      <ul class="part-list" data-model="heart">
         <li><button class="part" type="button" data-part="rightAtrium" aria-expanded="false"><span class="swatch" style="--c:#e29a9c" aria-hidden="true"></span><span class="part-name">Right atrium</span></button><p class="part-fn">Receives oxygen-poor blood coming back from the body through the vena cava.</p></li>
         <li><button class="part" type="button" data-part="rightVentricle" aria-expanded="false"><span class="swatch" style="--c:#cc6a70" aria-hidden="true"></span><span class="part-name">Right ventricle</span></button><p class="part-fn">Pumps oxygen-poor blood to the lungs through the pulmonary artery.</p></li>
         <li><button class="part" type="button" data-part="leftAtrium" aria-expanded="false"><span class="swatch" style="--c:#d98486" aria-hidden="true"></span><span class="part-name">Left atrium</span></button><p class="part-fn">Receives oxygen-rich blood from the lungs through the pulmonary veins.</p></li>
@@ -128,6 +145,7 @@
         <li><button class="part" type="button" data-part="valves" aria-expanded="false"><span class="swatch" style="--c:#d9a441" aria-hidden="true"></span><span class="part-name">Heart valves</span></button><p class="part-fn">Four one-way doors, between the atria and ventricles and at the exits of the heart, that stop blood flowing backwards. Their closing makes the sound of a heartbeat.</p></li>
       </ul>
       </div>
+    </div>
     </div>
     <p class="note stage-note" data-note>A model for learning, based on one person's scans, so real brains and hearts vary. In the heart, blue vessels carry oxygen-poor blood and red vessels carry oxygen-rich blood. The amygdala is a simplified shape. If the 3D view does not load, the list still tells you what every part does.</p>
     <p class="note stage-note">3D models: BodyParts3D, © The Database Center for Life Science, licensed under <a class="link" href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC Attribution-Share Alike 2.1 Japan</a>. We merged, trimmed, smoothed and recoloured the parts. <a class="link" href="credits.html">All credits</a></p>

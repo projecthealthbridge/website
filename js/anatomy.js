@@ -322,6 +322,6 @@ export async function init(root) {
   fit()
   intro()
   // Fetch the other model quietly while the visitor looks at the first.
-  setTimeout(() => ensure(root.getAttribute('data-current') === 'heart' ? 'brain' : 'heart').catch(() => {}), 1200)
+  if (!root.hasAttribute('data-single')) setTimeout(() => ensure(root.getAttribute('data-current') === 'heart' ? 'brain' : 'heart').catch(() => {}), 1200)
   return { select: choose }
 }
