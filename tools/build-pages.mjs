@@ -29,6 +29,7 @@ const I = {
   flask: stroke('<path d="M9 3h6M10 3v6l-5 10a1.5 1.5 0 0 0 1.4 2h11.2a1.5 1.5 0 0 0 1.4-2l-5-10V3M8 15h8"/>'),
   check: stroke('<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16 9.5"/>'),
   people: stroke('<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>'),
+  mic: stroke('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>'),
   video: stroke('<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/>'),
   bolt: stroke('<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>'),
   lock: stroke('<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'),
@@ -268,7 +269,7 @@ ${ANATOMY}
       <a class="item" href="quiz.html">${I.check}<div><h3>Quiz</h3><p>Test your knowledge with multiple-choice questions.</p></div></a>
       <a class="item" href="articles.html">${I.doc}<div><h3>Articles</h3><p>Articles and literature reviews written by our team on neurology, cardiology and psychology.</p></div></a>
       <a class="item" href="#contact">${I.people}<div><h3>Connect</h3><p>Send us a message, or follow us on Substack, Instagram and LinkedIn.</p></div></a>
-      <div class="item soon">${I.video}<div><h3>MedTalk</h3><p>Medical talk videos with evidence-based information.</p><span class="status">Coming soon</span></div></div>
+      <div class="item soon">${I.mic}<div><h3>MedTalk</h3><p>Our podcast: medical talk with evidence-based information.</p><span class="status">Coming soon</span></div></div>
       <div class="item soon">${I.bolt}<div><h3>Knowledge in Motion</h3><p>1-minute educational videos on health topics.</p><span class="status">Coming soon</span></div></div>
     </div>
   </div>
