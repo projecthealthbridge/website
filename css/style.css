@@ -16,6 +16,8 @@
   --on-brand: #ffffff;
   --signal: #0b7a75;
   --pulse: #c8372f;
+  --v-myth: #b8372b;
+  --v-partly: #8a5d0c;
   --grid: rgb(23 97 74 / 0.085);
   --band: #0d3b2f;
   --on-band: #e9f5ef;
@@ -41,6 +43,8 @@
     --on-brand: #06201a;
     --signal: #4ec9c1;
     --pulse: #ff7a70;
+    --v-myth: #ff8d78;
+    --v-partly: #e8b45a;
     --grid: rgb(95 202 160 / 0.075);
     --band: #0c2b29;
     --on-band: #e6f4ef;
@@ -464,3 +468,31 @@ details[open] summary { margin-bottom: 0.6rem; }
 /* each topic gets its own soft blob */
 .discipline:nth-child(2) .arch { border-radius: 44% 56% 42% 58% / 56% 44% 56% 44%; }
 .discipline:nth-child(3) .arch { border-radius: 52% 48% 60% 40% / 46% 54% 46% 54%; }
+
+/* MythBusters entries: verdict stamp, short points, remember box, slide gallery, filters */
+.w-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; }
+.w-topic { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 0.15rem 0.7rem; }
+.claim { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.9rem 1.4rem; margin: 1.2rem 0 1.2rem; }
+.claim-text { flex: 1 1 18rem; margin: 0; font: italic 400 clamp(1.7rem, 3.6vw, 2.5rem)/1.15 var(--serif); letter-spacing: -0.01em; max-width: 24ch; }
+.stamp { flex: none; display: inline-block; font: 700 0.95rem/1 var(--sans); letter-spacing: 0.16em; padding: 0.55rem 0.9rem; border: 2.5px solid currentColor; border-radius: 6px; transform: rotate(-4deg); margin-top: 0.4rem; }
+.stamp-myth { color: var(--v-myth); }
+.stamp-fact { color: var(--brand); }
+.stamp-partly { color: var(--v-partly); }
+.points { margin: 0 0 1.2rem; padding-left: 1.2rem; }
+.points li { margin-bottom: 0.65rem; padding-left: 0.2rem; max-width: 60ch; }
+.remember { border-left: 4px solid var(--brand); background: color-mix(in srgb, var(--brand) 9%, transparent); padding: 0.9rem 1.1rem; border-radius: 0 10px 10px 0; margin: 0 0 1.4rem; max-width: 60ch; }
+.remember b { display: block; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); margin-bottom: 0.25rem; }
+.remember p { margin: 0; font: 400 1.2rem/1.4 var(--serif); }
+.gallery { max-width: 26rem; margin: 0 0 1.6rem; }
+.gal-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border: 1px solid var(--line); border-radius: 12px; scrollbar-width: none; outline-offset: 3px; }
+.gal-track::-webkit-scrollbar { display: none; }
+.gal-track img { flex: 0 0 100%; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; scroll-snap-align: center; display: block; }
+.gal-bar { display: flex; align-items: center; justify-content: center; gap: 1.2rem; margin-top: 0.6rem; }
+.gal-count { font-size: 0.95rem; color: var(--ink-2); min-width: 3.5rem; text-align: center; }
+.gal-btn { width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 1.5px solid var(--ink); background: none; color: var(--ink); font: 400 1.6rem/1 var(--sans); cursor: pointer; display: grid; place-items: center; padding: 0 0 0.15rem; }
+.gal-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.gal-btn:disabled { opacity: 0.3; cursor: default; }
+.filters { display: flex; flex-wrap: wrap; gap: 0.4rem 2.4rem; margin-bottom: 1.6rem; }
+.filter-label { margin: 0 0 0.2rem; font-size: 0.85rem; color: var(--ink-2); }
+.filters .tabs { margin-bottom: 0.6rem; }
+@media (max-width: 560px) { .stamp { font-size: 0.85rem; } }

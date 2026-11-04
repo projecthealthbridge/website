@@ -14,6 +14,23 @@ const types = {
 http
   .createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost')
+    // Local helper for the carousel maker: saves a slide picture into assets/weekly/<post>/<n>.png. Only from this computer.
+    if (req.method === 'POST' && url.pathname === '/__save') {
+      const to = url.searchParams.get('to') || ''
+      const local = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress)
+      if (!local || !to.startsWith('assets/weekly/') || to.includes('..') || !to.endsWith('.png') || to.split('/').length !== 4) return res.writeHead(403).end('Not allowed')
+      const chunks = []
+      req.on('data', (c) => chunks.push(c))
+      req.on('end', () => {
+        const buf = Buffer.concat(chunks)
+        if (buf.length < 8 || buf.length > 8e6 || buf.readUInt32BE(0) !== 0x89504e47) return res.writeHead(400).end('Not a PNG')
+        const out = path.join(root, to)
+        fs.mkdirSync(path.dirname(out), { recursive: true })
+        fs.writeFileSync(out, buf)
+        res.writeHead(200).end('saved')
+      })
+      return
+    }
     let file = path.join(root, decodeURIComponent(url.pathname))
     if (file !== root && !file.startsWith(root + path.sep)) return res.writeHead(403).end('Forbidden')
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html')

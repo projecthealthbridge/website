@@ -142,26 +142,102 @@
     }
   })
 
-  /* Weekly archive: entries come from data/weekly.js. With none yet, the "coming soon" note shows. */
+  /* MythBusters archive: entries come from data/weekly.js. With none yet, the "coming soon" note shows.
+     Each entry shows the claim with a verdict stamp, a few short points, one thing to remember, the Instagram slides as a
+     swipeable gallery (buttons, arrow keys or a swipe) and the sources. With two or more entries, filters by verdict and
+     by topic appear. */
   document.querySelectorAll('[data-weekly]').forEach(function (box) {
     var entries = ((window.HB_WEEKLY || {}).entries || []).slice().sort(function (a, b) { return b.date.localeCompare(a.date) })
     var soon = document.querySelector('[data-weekly-empty]')
     if (entries.length === 0) { box.hidden = true; return }
     if (soon) soon.hidden = true
-    entries.forEach(function (w) {
-      var inside = [el('p', { class: 'verdict', text: w.verdict + '. ' + w.explanation })]
+    var STAMP = { 'Myth': 'myth', 'Fact': 'fact', 'True': 'fact', 'Partly true': 'partly', 'Not proven': 'partly' }
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function gallery(w) {
+      var n = w.slides.length
+      var track = el('div', { class: 'gal-track', tabindex: '0', role: 'group', 'aria-roledescription': 'carousel', 'aria-label': 'Slides for ' + w.title + '. Use the arrow keys or the buttons.' })
+      w.slides.forEach(function (src, k) {
+        track.appendChild(el('img', { src: src, alt: 'Slide ' + (k + 1) + ' of ' + n + ' from the post "' + w.title + '"', width: '1080', height: '1350', loading: k ? 'lazy' : 'eager' }))
+      })
+      var count = el('span', { class: 'gal-count', text: '1 / ' + n })
+      var prev = el('button', { type: 'button', class: 'gal-btn', 'aria-label': 'Previous slide', text: '\u2039' })
+      var next = el('button', { type: 'button', class: 'gal-btn', 'aria-label': 'Next slide', text: '\u203A' })
+      var current = function () { return Math.round(track.scrollLeft / (track.clientWidth || 1)) }
+      var show = function (i) { count.textContent = (i + 1) + ' / ' + n; prev.disabled = i <= 0; next.disabled = i >= n - 1 }
+      var go = function (k) { k = Math.max(0, Math.min(n - 1, k)); show(k); track.scrollTo({ left: k * track.clientWidth, behavior: calm ? 'auto' : 'smooth' }) }
+      var sync = function () { show(current()) }
+      track.addEventListener('scroll', sync)
+      prev.addEventListener('click', function () { go(current() - 1) })
+      next.addEventListener('click', function () { go(current() + 1) })
+      track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1) } else if (e.key === 'ArrowLeft') { e.preventDefault(); go(current() - 1) }
+      })
+      sync()
+      return el('div', { class: 'gallery' }, [track, el('div', { class: 'gal-bar' }, [prev, count, next])])
+    }
+
+    var cards = entries.map(function (w) {
+      var kids = [el('div', { class: 'w-meta' }, [el('time', { datetime: w.date, text: niceDate(w.date) })].concat(w.topic ? [el('span', { class: 'w-topic', text: w.topic })] : [])), el('h2', { text: w.title })]
+      if (w.author) kids.push(el('p', { class: 'row-by', text: 'By ' + w.author }))
+      kids.push(el('div', { class: 'claim' }, [
+        el('p', { class: 'claim-text', text: '\u201C' + w.claim + '\u201D' }),
+        el('span', { class: 'stamp stamp-' + (STAMP[w.verdict] || 'partly'), text: String(w.verdict).toUpperCase() }),
+      ]))
+      if (w.points && w.points.length) {
+        var pl = el('ul', { class: 'points' })
+        w.points.forEach(function (p) { pl.appendChild(el('li', { text: p })) })
+        kids.push(pl)
+      } else if (w.explanation) kids.push(el('p', { text: w.explanation }))
+      if (w.remember) kids.push(el('div', { class: 'remember' }, [el('b', { text: 'What to remember' }), el('p', { text: w.remember })]))
+      if (w.slides && w.slides.length) kids.push(gallery(w))
       if (w.sources && w.sources.length) {
         var ul = el('ul', { class: 'list' })
         w.sources.forEach(function (s) { var li = el('li'); li.appendChild(el('a', { class: 'link', href: s.url, target: '_blank', rel: 'noopener', text: s.label })); ul.appendChild(li) })
-        inside.push(el('h3', { text: 'Sources' }), ul)
+        kids.push(el('h3', { text: 'Sources' }), ul)
       }
       if (w.quiz && w.quiz.length) {
-        inside.push(el('h3', { text: 'Quiz answers' }))
-        w.quiz.forEach(function (q) { inside.push(el('p', { text: q.q + ' ' + q.options[q.answer] + '.' })) })
+        kids.push(el('h3', { text: 'Quiz answers' }))
+        w.quiz.forEach(function (q) { kids.push(el('p', { text: q.q + ' ' + q.options[q.answer] + '.' })) })
       }
-      var details = el('details', {}, [el('summary', { text: 'Show the answer' })].concat(inside))
-      box.appendChild(el('article', { class: 'weekly' }, [el('time', { datetime: w.date, text: niceDate(w.date) }), el('h2', { text: w.title })].concat(w.author ? [el('p', { class: 'row-by', text: 'By ' + w.author })] : [], [el('p', { text: 'The claim: ' + w.claim }), details])))
+      var card = el('article', { class: 'weekly', 'data-verdict': w.verdict, 'data-topic': w.topic || '' }, kids)
+      return { w: w, node: card }
     })
+
+    if (entries.length >= 2) {
+      var state = { verdict: 'All', topic: 'All' }
+      var none = el('p', { class: 'muted', hidden: '', text: 'Nothing matches that filter yet.' })
+      var apply = function () {
+        var shown = 0
+        cards.forEach(function (c) {
+          var ok = (state.verdict === 'All' || c.w.verdict === state.verdict) && (state.topic === 'All' || c.w.topic === state.topic)
+          c.node.hidden = !ok
+          if (ok) shown++
+        })
+        none.hidden = shown > 0
+      }
+      var group = function (label, key, values) {
+        var wrap = el('div', { class: 'filter' }, [el('p', { class: 'filter-label', text: label })])
+        var row = el('div', { class: 'tabs', role: 'group', 'aria-label': 'Filter by ' + label.toLowerCase() })
+        ;['All'].concat(values).forEach(function (v) {
+          var b = el('button', { type: 'button', class: 'tab', 'aria-pressed': String(v === 'All'), text: v })
+          b.addEventListener('click', function () {
+            state[key] = v
+            Array.prototype.forEach.call(row.children, function (x) { x.setAttribute('aria-pressed', String(x === b)) })
+            apply()
+          })
+          row.appendChild(b)
+        })
+        wrap.appendChild(row)
+        return wrap
+      }
+      var uniq = function (key) { return entries.map(function (w) { return w[key] }).filter(function (v, i, arr) { return v && arr.indexOf(v) === i }) }
+      var filters = el('div', { class: 'filters' }, [group('Verdict', 'verdict', uniq('verdict'))])
+      if (uniq('topic').length > 1) filters.appendChild(group('Topic', 'topic', uniq('topic')))
+      box.appendChild(filters)
+      box.appendChild(none)
+    }
+    cards.forEach(function (c) { box.appendChild(c.node) })
   })
 
   /* Glossary: A to Z, with a search box and category tabs. */

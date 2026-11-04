@@ -79,6 +79,7 @@
         <div class="chips" id="types">
           <label><input type="radio" name="type" value="article" checked> Article</label>
           <label><input type="radio" name="type" value="experiment"> Experiment</label>
+          <label><input type="radio" name="type" value="announcement"> Announcement</label>
           <label><input type="radio" name="type" value="mythbuster"> MythBuster</label>
           <label><input type="radio" name="type" value="quiz"> Quiz (Story)</label>
           <label><input type="radio" name="type" value="podcast"> Podcast</label>
@@ -185,6 +186,17 @@
         { name: 'limits', label: 'What this cannot tell us', kind: 'area', short: true, help: 'Small groups and no controls: say so. It keeps the post honest.' },
         { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'The full write-up is on our Substack. Link in bio.', max: 120 },
         { name: 'link', label: 'Where to read it', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
+      ],
+    },
+    announcement: {
+      hint: 'News about HealthBridge itself (we are back, a new series, an event): a cover, one point per slide and a last slide to follow along. 1080 x 1350.',
+      fields: [
+        { name: 'title', label: 'Headline (the first slide)', kind: 'area', short: true, max: 140 },
+        { name: 'author', label: 'Posted by', kind: 'select', options: MEMBERS, def: MEMBERS[0], help: 'The list comes from data/members.js.' },
+        { name: 'author2', label: 'Or another member (type a name, this replaces the choice above)', kind: 'text', max: 60 },
+        { name: 'slides', label: 'The slides', kind: 'area', tall: true, help: 'One point per slide. Leave a blank line between slides. About 25 words each reads best.' },
+        { name: 'closing', label: 'Last slide, second line', kind: 'text', def: 'Follow along on Instagram and Substack. Link in bio.', max: 120 },
+        { name: 'link', label: 'Where to find us', kind: 'text', def: 'projecthealthbridge.substack.com', max: 80 },
       ],
     },
     mythbuster: {
@@ -599,6 +611,16 @@
       if (v.limits.trim()) out.push({ kind: 'text', label: 'What this cannot tell us', text: v.limits.trim() })
       out.push({ kind: 'end', heading: ['Read the full', 'write-up'], text: v.closing || 'The full write-up is on our Substack.', link: v.link, deco: 'trace' })
       return { slides: out, ready: !!v.title && !!v.results.trim(), name: v.title, need: 'Write the question and the results to download.' }
+    },
+    announcement: function (v, notes) {
+      var body = paras(v.slides)
+      if (body.length > MAX_BODY) notes.push('Instagram allows 10 slides, so only the first ' + MAX_BODY + ' of your ' + body.length + ' are used. Cut or merge some.')
+      longWords(body, 2, notes)
+      body = body.slice(0, MAX_BODY)
+      var out = [{ kind: 'cover', label: 'HealthBridge news', text: v.title || 'Your headline goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: 'trace' }]
+      body.forEach(function (s) { out.push({ kind: 'text', label: 'HealthBridge news', text: s }) })
+      out.push({ kind: 'end', heading: ['Follow', 'along'], text: v.closing || 'Follow along on Instagram and Substack.', link: v.link, deco: 'trace' })
+      return { slides: out, ready: !!v.title && body.length > 0, name: v.title, need: 'Write a headline and at least one slide to download.' }
     },
     mythbuster: function (v, notes) {
       var src = [{ who: v.source1, title: v.source1t }, { who: v.source2, title: v.source2t }].filter(function (s) { return s.who.trim() || s.title.trim() })
