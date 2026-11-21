@@ -45,7 +45,7 @@ test('every site quiz question has a valid answer position and four options', ()
   global.window = {}
   require('../js/data.js')
   const quiz = global.window.HB_DATA.QUIZ
-  assert.strictEqual(quiz.length, 6)
+  assert.strictEqual(quiz.length, 7)
   for (const q of quiz) {
     assert.strictEqual(q.options.length, 4)
     assert.ok(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length, q.q)

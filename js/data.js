@@ -11,6 +11,7 @@ window.HB_DATA = (function () {
     { topic: 'Cardiology', level: 'medium', q: 'Which valve prevents blood from flowing back into the left atrium?', options: ['Pulmonary valve', 'Tricuspid valve', 'Mitral (bicuspid) valve', 'Aortic valve'], answer: 2 },
     { topic: 'Neurology', level: 'medium', q: 'Which type of brain cell is primarily responsible for transmitting electrical signals?', options: ['Astrocyte', 'Microglia', 'Neuron', 'Oligodendrocyte'], answer: 2 },
     { topic: 'Cardiology', level: 'easy', q: "During exercise, which of the following usually increases the most to meet the body's oxygen demands?", options: ['Heart rate only', 'Stroke volume only', 'Cardiac output', 'Blood pressure only'], answer: 2 },
+    { topic: 'Cardiology', level: 'easy', q: 'How can you find out if you have high cholesterol?', options: ['You feel dizzy', 'Your skin changes', 'A blood test', 'You get chest pain every day'], answer: 2 },
   ]
 
   // From the "Content Topics & Post Formats" document: what the team plans to write about.
