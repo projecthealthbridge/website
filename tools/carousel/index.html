@@ -491,6 +491,21 @@
         ctx.fillStyle = t.ink; ctx.font = '600 29px ' + SANS
         wrap(ctx, a[2], w - 72 - 70).slice(0, 2).forEach(function (l, k) { ctx.fillText(l, x + 76, py + 64 + k * 34) })
       })
+    } else if (art === 'reading') {
+      // two real entries from the Reading list page, then a hint that there are more
+      var refs = [['Do cognitive abilities reduce eyewitness susceptibility to the misinformation effect?', 'Brassil et al. (2024), Psychonomic Bulletin & Review'], ['A meta-analysis of false memory in healthy and pathological cognitive aging', 'Huan et al. (2026), Psychology and Aging']]
+      refs.forEach(function (r, i) {
+        var py = y + 24 + i * 168
+        ctx.fillStyle = t.bg; rr(ctx, x + 36, py, w - 72, 150, 22); ctx.fill()
+        ctx.strokeStyle = hexA(t.ink, 0.2); ctx.lineWidth = 2; rr(ctx, x + 36, py, w - 72, 150, 22); ctx.stroke()
+        ctx.fillStyle = accent; rr(ctx, x + 64, py + 28, 38, 50, 6); ctx.fill()
+        ctx.fillStyle = t.bg; rr(ctx, x + 72, py + 40, 22, 5, 2); ctx.fill(); rr(ctx, x + 72, py + 52, 22, 5, 2); ctx.fill()
+        ctx.fillStyle = t.ink; ctx.font = '600 29px ' + SANS; ctx.textAlign = 'left'
+        wrap(ctx, r[0], w - 72 - 130).slice(0, 2).forEach(function (l, k) { ctx.fillText(l, x + 124, py + 42 + k * 34) })
+        ctx.fillStyle = t.ink2; ctx.font = '500 25px ' + SANS; ctx.fillText(r[1], x + 124, py + 116)
+      })
+      ctx.fillStyle = hexA(t.ink, 0.3); rr(ctx, x + 36, y + h - 56, w - 72, 14, 7); ctx.fill()
+      ctx.fillStyle = hexA(t.ink, 0.18); rr(ctx, x + 36, y + h - 30, (w - 72) * 0.6, 14, 7); ctx.fill()
     } else if (art === 'stats') {
       // four numbers from the homepage "Vital signs"
       var st4 = [['20%', 'of your body’s energy goes to your brain', TOPIC.Neurology.c], ['100,000', 'heartbeats a day', TOPIC.Cardiology.c], ['86 billion', 'neurons in your brain', TOPIC.Neurology.c], ['20,000', 'breaths a day, without thinking', TOPIC.Psychology.c]]
@@ -792,10 +807,10 @@
       // A slide written as "Name: what it does" gets the name as a big phrase and a topic-colour hint (blue, red, amber in turn)
       var accents = [TOPIC.Neurology.c, TOPIC.Cardiology.c, TOPIC.Psychology.c]
       // "[models] 3D models: text" (also myth, quiz, glossary, check, articles) makes a picture slide, and the cover gets the three topic symbols
-      var withArt = body.some(function (s) { return /^\[(models|myth|quiz|glossary|check|articles|stats)\]/.test(s) })
+      var withArt = body.some(function (s) { return /^\[(models|myth|quiz|glossary|check|articles|stats|reading)\]/.test(s) })
       if (withArt) out[0].deco = 'topics'
       body.forEach(function (s, i) {
-        var ma = /^\[(models|myth|quiz|glossary|check|articles|stats)\]\s*([^:]{2,28}):\s*([\s\S]+)$/.exec(s)
+        var ma = /^\[(models|myth|quiz|glossary|check|articles|stats|reading)\]\s*([^:]{2,28}):\s*([\s\S]+)$/.exec(s)
         var m = /^([^:.]{2,28}):\s*([\s\S]+)$/.exec(s)
         if (ma) out.push({ kind: 'feature', label: 'On our website', art: ma[1], head: ma[2].trim(), text: ma[3].trim().charAt(0).toUpperCase() + ma[3].trim().slice(1), accent: accents[i % 3] })
         else if (m) out.push({ kind: 'evidence', label: 'HealthBridge news', head: m[1].trim(), text: m[2].trim().charAt(0).toUpperCase() + m[2].trim().slice(1), accent: accents[i % 3] })
