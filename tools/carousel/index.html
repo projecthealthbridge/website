@@ -410,6 +410,94 @@
       rr(ctx, PAD + k * gap, cy - h / 2, gap * 0.55, h, gap * 0.27); ctx.fill()
     }
   }
+  // The three topic symbols side by side (brain, heart, head), each in its own colour
+  function threeTopics(ctx, y, size) {
+    var names = ['Neurology', 'Cardiology', 'Psychology'], gap = (DIM.w - 2 * PAD - 3 * size) / 2
+    names.forEach(function (n, k) {
+      ctx.save(); ctx.translate(PAD + k * (size + gap), y); ctx.scale(size / 64, size / 64)
+      ctx.strokeStyle = TOPIC[n].c; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round'
+      ctx.stroke(TOPIC[n].icon); ctx.restore()
+    })
+  }
+  function pill(ctx, x, y, w, h, fill, stroke, lw) {
+    rr(ctx, x, y, w, h, h / 2.6)
+    if (fill) { ctx.fillStyle = fill; ctx.fill() }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 3; ctx.stroke() }
+  }
+  // Small drawn pictures of the website, one per feature slide. Everything inside is drawn here, nothing is a photo.
+  function drawArt(ctx, t, art, x, y, w, h, accent) {
+    ctx.save()
+    ctx.fillStyle = hexA(accent, 0.10); rr(ctx, x, y, w, h, 30); ctx.fill()
+    ctx.strokeStyle = hexA(accent, 0.55); ctx.lineWidth = 3; rr(ctx, x, y, w, h, 30); ctx.stroke()
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left'
+    var cx = x + w / 2, cy = y + h / 2
+    if (art === 'models') {
+      ;['Neurology', 'Cardiology'].forEach(function (n, k) {
+        ctx.save(); ctx.translate(x + w * (k ? 0.56 : 0.10), y + 40); ctx.scale(250 / 64, 250 / 64)
+        ctx.strokeStyle = TOPIC[n].c; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke(TOPIC[n].icon); ctx.restore()
+      })
+      pill(ctx, cx - 190, y + h - 96, 380, 64, hexA(accent, 0.22), accent, 3)
+      ctx.fillStyle = t.ink; ctx.font = '600 32px ' + SANS; ctx.textAlign = 'center'; ctx.fillText('Tap a part to learn', cx, y + h - 64)
+    } else if (art === 'myth') {
+      var cw = w - 72, cxl = x + 36
+      ctx.fillStyle = t.bg; rr(ctx, cxl, y + 36, cw, h - 72, 22); ctx.fill()
+      ctx.strokeStyle = hexA(t.ink, 0.18); ctx.lineWidth = 2; rr(ctx, cxl, y + 36, cw, h - 72, 22); ctx.stroke()
+      ctx.fillStyle = t.ink; ctx.font = 'italic 400 52px ' + SERIF; ctx.textAlign = 'left'
+      wrap(ctx, '“We only use 10% of our brain.”', cw - 330).forEach(function (l, i) { ctx.fillText(l, cxl + 36, y + 120 + i * 62) })
+      ctx.save(); ctx.translate(cxl + cw - 128, y + 150); ctx.rotate(-0.12)
+      ctx.strokeStyle = t.bad; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(0, 0, 78, 0, 6.2832); ctx.stroke()
+      ctx.lineWidth = 15; ctx.beginPath(); ctx.moveTo(-32, -32); ctx.lineTo(32, 32); ctx.moveTo(32, -32); ctx.lineTo(-32, 32); ctx.stroke(); ctx.restore()
+      ctx.fillStyle = t.ink2; ctx.font = '500 30px ' + SANS; ctx.fillText('Checked against two real sources', cxl + 36, y + h - 92)
+      pill(ctx, cxl + cw - 210, y + h - 120, 174, 56, null, t.bad, 3); ctx.fillStyle = t.bad; ctx.font = '700 28px ' + SANS; ctx.textAlign = 'center'; ctx.fillText('MYTH', cxl + cw - 123, y + h - 92)
+    } else if (art === 'quiz') {
+      ctx.fillStyle = t.ink; ctx.font = '400 38px ' + SERIF; ctx.textAlign = 'left'
+      wrap(ctx, 'How can you find out if you have high cholesterol?', w - 96).forEach(function (l, i) { ctx.fillText(l, x + 48, y + 56 + i * 46) })
+      var opts = ['You feel dizzy', 'Your skin changes', 'A blood test'], oy = y + 130
+      opts.forEach(function (o, i) {
+        var right = i === 2, py = oy + i * 90
+        pill(ctx, x + 48, py, w - 96, 72, right ? accent : hexA(t.ink, 0.07), right ? null : hexA(t.ink, 0.25), 2)
+        ctx.fillStyle = right ? t.bg : t.ink2; ctx.font = '700 30px ' + SANS; ctx.textAlign = 'left'; ctx.fillText('ABC'[i], x + 80, py + 37)
+        ctx.font = '600 34px ' + SANS; ctx.fillText(o, x + 136, py + 37)
+        if (right) { ctx.font = '700 28px ' + SANS; ctx.textAlign = 'right'; ctx.fillText('Correct', x + w - 80, py + 37) }
+      })
+    } else if (art === 'glossary') {
+      var terms = [['fMRI', 'A brain scan that shows which parts are more active', TOPIC.Neurology.c], ['Heart rate and pulse', 'How many times your heart beats per minute', TOPIC.Cardiology.c], ['Growth mindset', 'Believing your abilities can be developed', TOPIC.Psychology.c]]
+      terms.forEach(function (tm, i) {
+        var ty = y + 32 + i * 130
+        ctx.fillStyle = hexA(t.ink, 0.07); rr(ctx, x + 36, ty, w - 72, 110, 20); ctx.fill()
+        ctx.fillStyle = tm[2]; rr(ctx, x + 36, ty, 16, 110, 8); ctx.fill()
+        ctx.fillStyle = t.ink; ctx.font = '600 36px ' + SANS; ctx.textAlign = 'left'; ctx.fillText(tm[0], x + 76, ty + 36)
+        ctx.fillStyle = t.ink2; ctx.font = '400 30px ' + SANS; ctx.fillText(tm[1], x + 76, ty + 80)
+      })
+    } else if (art === 'check') {
+      ;['Source 1', 'Source 2'].forEach(function (s, i) {
+        var py = y + 44 + i * 100
+        pill(ctx, x + 48, py, 340, 76, hexA(t.ink, 0.07), hexA(t.ink, 0.25), 2)
+        ctx.fillStyle = accent; rr(ctx, x + 70, py + 18, 30, 40, 5); ctx.fill()
+        ctx.fillStyle = t.ink; ctx.font = '600 32px ' + SANS; ctx.textAlign = 'left'; ctx.fillText(s, x + 120, py + 40)
+      })
+      ctx.strokeStyle = accent; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+      ctx.beginPath(); ctx.moveTo(x + 430, y + 134); ctx.lineTo(x + w - 270, y + 134); ctx.moveTo(x + w - 296, y + 110); ctx.lineTo(x + w - 270, y + 134); ctx.lineTo(x + w - 296, y + 158); ctx.stroke()
+      ctx.beginPath(); ctx.arc(x + w - 150, y + 134, 78, 0, 6.2832); ctx.stroke()
+      ctx.lineWidth = 14; ctx.beginPath(); ctx.moveTo(x + w - 188, y + 136); ctx.lineTo(x + w - 156, y + 168); ctx.lineTo(x + w - 108, y + 100); ctx.stroke()
+      ;[['Myth', t.bad], ['Fact', t.brand], ['Partly true', t.mid]].forEach(function (v, i) {
+        var pw = [170, 170, 260][i], px = x + 48 + [0, 190, 380][i], py = y + h - 104
+        pill(ctx, px, py, pw, 64, null, v[1], 4); ctx.fillStyle = v[1]; ctx.font = '700 30px ' + SANS; ctx.textAlign = 'center'; ctx.fillText(v[0], px + pw / 2, py + 33)
+      })
+    } else if (art === 'articles') {
+      var cols = [TOPIC.Neurology.c, TOPIC.Cardiology.c, TOPIC.Psychology.c]
+      for (var k = 2; k >= 0; k--) {
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate((k - 1) * 0.045)
+        var aw = w - 200, ah = 230, ax = -aw / 2, ay = -ah / 2 + (k - 1) * 8
+        ctx.fillStyle = t.bg; rr(ctx, ax, ay, aw, ah, 22); ctx.fill(); ctx.strokeStyle = hexA(t.ink, 0.22); ctx.lineWidth = 2; rr(ctx, ax, ay, aw, ah, 22); ctx.stroke()
+        ctx.fillStyle = cols[k]; ctx.beginPath(); ctx.arc(ax + 44, ay + 48, 14, 0, 6.2832); ctx.fill()
+        ctx.fillStyle = hexA(t.ink, 0.5); rr(ctx, ax + 76, ay + 38, aw * 0.5, 20, 10); ctx.fill()
+        ctx.fillStyle = hexA(t.ink, 0.22); rr(ctx, ax + 36, ay + 100, aw - 72, 16, 8); ctx.fill(); rr(ctx, ax + 36, ay + 136, aw - 120, 16, 8); ctx.fill(); rr(ctx, ax + 36, ay + 172, aw * 0.4, 16, 8); ctx.fill()
+        ctx.restore()
+      }
+    }
+    ctx.restore()
+  }
   // The topic's own symbol, drawn large in outline on the right of a MythBuster cover
   function topicIcon(ctx, topic, y, size) {
     var tp = TOPIC[topic]; if (!tp) return
@@ -417,7 +505,7 @@
     ctx.strokeStyle = tp.c; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round'
     ctx.stroke(tp.icon); ctx.restore()
   }
-  function deco(ctx, t, kind, y, seedText) { if (kind === 'wave') wave(ctx, t, y + 80, seedText); else trace(ctx, t, y) }
+  function deco(ctx, t, kind, y, seedText) { if (kind === 'topics') { threeTopics(ctx, y - 70, 170); return } if (kind === 'wave') wave(ctx, t, y + 80, seedText); else trace(ctx, t, y) }
   function background(ctx, t) {
     var W = DIM.w, H = DIM.h
     ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H)
@@ -472,7 +560,9 @@
       var r = paragraph(ctx, s.text, PAD, 230, { w: inner.w, h: topicCover ? 440 : 620, max: 150, min: 64, weight: '400', family: SERIF, lh: 1.04 }, t.ink)
       fits = r.fits
       if (s.by) { ctx.fillStyle = t.ink2; ctx.font = '500 38px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText(s.by, PAD, Math.min(r.bottom + 40, topicCover ? 720 : 880)) }
-      if (topicCover) topicIcon(ctx, s.deco.slice(6), 700, 300); else deco(ctx, t, s.deco, 900, s.text)
+      if (topicCover) topicIcon(ctx, s.deco.slice(6), 700, 300)
+      else if (s.deco === 'topics') threeTopics(ctx, 840, 190)
+      else deco(ctx, t, s.deco, 900, s.text)
     } else if (s.kind === 'text') {
       labelRule(ctx, t, s.label)
       fits = paragraph(ctx, s.text, PAD, 270, { w: inner.w, h: 780, max: 96, min: 44, weight: '400', family: SERIF, lh: 1.2, centre: 0.38 }, t.ink).fits
@@ -501,6 +591,13 @@
         lines.slice(0, 2).forEach(function (l, j) { ctx.fillText(l, PAD + 56, cy + 52 + j * 44) })
         if (lines.length > 2) fits = false
       })
+    } else if (s.kind === 'feature') {
+      // A feature slide: a big name, a drawn picture of that part of the website, then one short line
+      labelRule(ctx, t, s.label)
+      var fh = paragraph(ctx, s.head, PAD, 250, { w: inner.w, h: 120, max: 96, min: 64, weight: '400', family: SERIF, lh: 1.05 }, t.ink)
+      drawArt(ctx, t, s.art, PAD, 410, inner.w, 430, s.accent || t.brand)
+      var fb = paragraph(ctx, s.text, PAD, 880, { w: inner.w, h: 190, max: 52, min: 36, weight: '400', family: SERIF, lh: 1.28 }, t.ink)
+      fits = fh.fits && fb.fits
     } else if (s.kind === 'list') {
       labelRule(ctx, t, s.label)
       fits = list(ctx, t, s.items, PAD, 270, { w: inner.w, h: 780, max: 66, min: 36, lh: 1.22 }, s.ordered)
@@ -687,8 +784,19 @@
       longWords(body, 2, notes)
       body = body.slice(0, MAX_BODY)
       var out = [{ kind: 'cover', label: 'HealthBridge news', text: v.title || 'Your headline goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: 'trace' }]
-      body.forEach(function (s) { out.push({ kind: 'text', label: 'HealthBridge news', text: s }) })
-      out.push({ kind: 'end', heading: ['Follow', 'along'], text: v.closing || 'Follow along on Instagram and Substack.', link: v.link, deco: 'trace' })
+      // A slide written as "Name: what it does" gets the name as a big phrase and a topic-colour hint (blue, red, amber in turn)
+      var accents = [TOPIC.Neurology.c, TOPIC.Cardiology.c, TOPIC.Psychology.c]
+      // "[models] 3D models: text" (also myth, quiz, glossary, check, articles) makes a picture slide, and the cover gets the three topic symbols
+      var withArt = body.some(function (s) { return /^\[(models|myth|quiz|glossary|check|articles)\]/.test(s) })
+      if (withArt) out[0].deco = 'topics'
+      body.forEach(function (s, i) {
+        var ma = /^\[(models|myth|quiz|glossary|check|articles)\]\s*([^:]{2,28}):\s*([\s\S]+)$/.exec(s)
+        var m = /^([^:.]{2,28}):\s*([\s\S]+)$/.exec(s)
+        if (ma) out.push({ kind: 'feature', label: 'On our website', art: ma[1], head: ma[2].trim(), text: ma[3].trim().charAt(0).toUpperCase() + ma[3].trim().slice(1), accent: accents[i % 3] })
+        else if (m) out.push({ kind: 'evidence', label: 'HealthBridge news', head: m[1].trim(), text: m[2].trim().charAt(0).toUpperCase() + m[2].trim().slice(1), accent: accents[i % 3] })
+        else out.push({ kind: 'text', label: 'HealthBridge news', text: s })
+      })
+      out.push({ kind: 'end', heading: withArt ? ['Come', 'explore'] : ['Follow', 'along'], text: v.closing || 'Follow along on Instagram and Substack.', link: v.link, deco: withArt ? 'topics' : 'trace' })
       return { slides: out, ready: !!v.title && body.length > 0, name: v.title, need: 'Write a headline and at least one slide to download.' }
     },
     mythbuster: function (v, notes) {
