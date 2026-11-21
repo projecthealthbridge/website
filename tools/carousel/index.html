@@ -434,7 +434,7 @@
     ctx.fillStyle = t.ink; ctx.font = '500 38px ' + SERIF; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'
     ctx.fillText('HealthBridge', PAD + 84, y + 34)
     ctx.fillStyle = t.ink2; ctx.font = '500 32px ' + SANS; ctx.textAlign = 'right'
-    ctx.fillText(n + ' / ' + total, DIM.w - PAD, y + 34)
+    if (DIM !== STORY) ctx.fillText(n + ' / ' + total, DIM.w - PAD, y + 34) // a Story frame is posted alone, so no 6 / 8 counter
     // the three topic colours (neurology, cardiology, psychology), on every slide of every maker
     ;['#3d86b5', '#d0453f', '#d9a441'].forEach(function (c, k) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(DIM.w / 2 - 36 + k * 36, y + 34, 11, 0, 6.2832); ctx.fill() })
     ctx.textAlign = 'left'
@@ -591,7 +591,7 @@
     var tp = TOPIC[d.topic], acc = tp ? tp.c : t.brand
     ctx.textBaseline = 'top'; ctx.textAlign = 'left'
     ctx.fillStyle = t.brand; ctx.font = '600 34px ' + SANS; ctx.fillText(d.series, PAD, top + 20)
-    if (s.of > 1) { ctx.fillStyle = t.ink2; ctx.textAlign = 'right'; ctx.font = '500 34px ' + SANS; ctx.fillText((ask ? 'Question ' : 'Answer ') + s.i + ' of ' + s.of, W - PAD, top + 20); ctx.textAlign = 'left' }
+    // no "Question 2 of 4" / "Answer 2 of 4" label: each Story frame is posted on its own (his order, 21 Nov 2026)
     if (tp) {
       // the topic's symbol from the site, then the topic name in its colour
       ctx.save(); ctx.translate(PAD, top + 66); ctx.scale(1.05, 1.05); ctx.strokeStyle = acc; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(tp.icon); ctx.restore()
