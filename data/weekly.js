@@ -22,6 +22,25 @@
 window.HB_WEEKLY = {
   entries: [
     {
+      date: '2026-11-25',
+      title: 'MythBuster: You can multitask',
+      author: 'Anirudh Shukla',
+      topic: 'Psychology',
+      claim: 'You can multitask.',
+      verdict: 'Myth',
+      points: [
+        'People cannot do two demanding tasks at once. They switch back and forth, and every switch costs time and causes mistakes.',
+        'Each switch costs only a few tenths of a second, but the costs add up. Psychologist David Meyer says brief mental blocks from switching can cost as much as 40 percent of productive time.',
+        'People almost always take longer and make more errors when they switch between tasks than when they stay on one. Even half a second matters when a driver is on the phone.',
+      ],
+      remember: 'Do one demanding task at a time. Easy tasks done together, like laundry while talking to a friend, are usually fine.',
+      slides: ['assets/weekly/multitasking/1.png', 'assets/weekly/multitasking/2.png', 'assets/weekly/multitasking/3.png', 'assets/weekly/multitasking/4.png', 'assets/weekly/multitasking/5.png', 'assets/weekly/multitasking/6.png', 'assets/weekly/multitasking/7.png', 'assets/weekly/multitasking/8.png'],
+      sources: [
+        { label: 'American Psychological Association (2006). Multitasking: Switching costs.', url: 'https://www.apa.org/topics/research/multitasking' },
+        { label: 'Madore KP, Wagner AD, Cerebrum (2019). Multicosts of Multitasking.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7075496/' },
+      ],
+    },
+    {
       date: '2026-11-18',
       title: 'MythBuster: We only use 10% of our brain',
       author: 'Anirudh Shukla',

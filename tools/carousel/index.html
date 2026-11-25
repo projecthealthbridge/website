@@ -823,7 +823,7 @@
       var src = [{ who: v.source1, title: v.source1t }, { who: v.source2, title: v.source2t }].filter(function (s) { return s.who.trim() || s.title.trim() })
       if (v.myth.trim() && src.length < 2) notes.push('A MythBuster needs two sources you have checked yourself. You have ' + src.length + '.')
       longWords([v.truth].filter(Boolean), 3, notes, 55)
-      var out = [{ kind: 'cover', label: 'MythBuster, ' + v.category, text: v.myth ? '“' + v.myth.trim() + '”' : 'The myth goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: TOPIC[v.category] ? 'topic:' + v.category : 'trace' }]
+      var out = [{ kind: 'cover', label: 'MythBuster, ' + v.category, text: v.myth ? '“' + v.myth.trim() + '”' : 'The myth goes here', by: '', deco: TOPIC[v.category] ? 'topic:' + v.category : 'trace' }]
       out.push({ kind: 'verdict', verdict: v.verdict, text: v.truth.trim() || 'What the evidence shows goes here.' })
       var terms = v.terms.split('\n').map(function (l) { return l.trim() }).filter(Boolean).slice(0, 4).map(function (l) { var i = l.indexOf(':'); return i > 0 ? { who: l.slice(0, i).trim(), title: l.slice(i + 1).trim() } : { who: '', title: l } })
       if (terms.length) out.push({ kind: 'terms', label: 'Words to know', items: terms })

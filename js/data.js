@@ -71,6 +71,8 @@ window.HB_DATA = (function () {
     { term: 'fMRI', category: 'Neurology', definition: 'A brain scan (functional magnetic resonance imaging) that shows which parts of the brain are more active at a given moment.' },
     { term: 'Epilepsy', category: 'Neurology', definition: 'A condition where the brain sometimes has sudden bursts of abnormal activity, called seizures.' },
     { term: 'Neuroscientist', category: 'Neurology', definition: 'A scientist who studies the brain and nervous system.' },
+    { term: 'Task switching', category: 'Psychology', definition: 'Changing from one task to another.' },
+    { term: 'Cognition', category: 'Psychology', definition: 'Mental processes like thinking and memory.' },
     { term: 'Growth mindset', category: 'Psychology', definition: 'Believing your abilities can be developed through effort and practice. People with growth mindsets embrace challenges, learn from failures, and achieve more than those with fixed mindsets.' },
   ]
 
