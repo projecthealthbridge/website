@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HealthBridge icon library (Lucide)</title>
+<style>body{margin:0;padding:24px;background:#0b1020;color:#e8ecf6;font:16px system-ui,sans-serif}h1{font-size:20px}h2{font-size:16px;margin:24px 0 8px;opacity:.9}.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}figure{margin:0;padding:12px;border:1px solid #26304d;border-radius:12px;text-align:center}svg{width:72px;height:72px;stroke-width:1.6}figcaption{margin-top:6px;font-size:12px;opacity:.75}.b{color:#4f8cff}.r{color:#ff5a5f}.a{color:#ffb020}.w{color:#e8ecf6}</style></head><body>
+<h1>HealthBridge icon library: Lucide outline icons (ISC licence, free to use and edit)</h1>
+<p>One style for all, drawn in the topic colour: Neurology blue, Cardiology red, Psychology amber, neutral white.</p><div id="root"></div>
+<script>
+var sets=[['Neurology (blue)','b',['brain','brain-circuit','brain-cog','eye','ear','moon','bed']],
+['Cardiology (red)','r',['heart','heart-pulse','activity','stethoscope','droplet','thermometer']],
+['Psychology (amber)','a',['lightbulb','message-circle','users','footprints','scale','search','quote']],
+['Body and science (neutral)','w',['dna','bone','microscope','flask-conical','pill','syringe','hospital','clipboard-list']],
+['Site, learning and media (neutral)','w',['book-open','graduation-cap','shield-check','mic','video','play']]];
+var root=document.getElementById('root');
+sets.forEach(function(s){var h=document.createElement('h2');h.textContent=s[0];root.appendChild(h);var g=document.createElement('div');g.className='g';root.appendChild(g);
+s[2].forEach(function(n){fetch(n+'.svg').then(function(r){return r.text()}).then(function(t){var f=document.createElement('figure');f.className=s[1];f.innerHTML=t+'<figcaption>'+n+'</figcaption>';g.appendChild(f)})})});
+</script></body></html>

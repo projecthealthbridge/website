@@ -88,9 +88,9 @@
       <div id="forms" style="display:grid;gap:1.1rem"></div>
       <fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:.4rem">Colours</legend>
         <div class="chips">
-          <label><input type="radio" name="theme" value="light" checked> Light</label>
-          <label><input type="radio" name="theme" value="dark"> Dark</label>
-          <label><input type="radio" name="theme" value="forest"> Forest</label>
+          <label><input type="radio" name="theme" value="dark" checked> Dark</label>
+          <label><input type="radio" name="theme" value="tricolour"> Tricolour</label>
+          <label><input type="radio" name="theme" value="midnight"> Midnight</label>
         </div></fieldset>
       <button type="button" class="btn btn-line" id="clear">Clear this form</button>
       </div>
@@ -147,9 +147,10 @@
   var SERIF = '"Newsreader", Georgia, "Times New Roman", serif'
   var SANS = '"Instrument Sans", system-ui, "Segoe UI", sans-serif'
   var THEMES = {
-    light: { bg: '#f3f7f5', ink: '#0c2420', ink2: '#3d574f', brand: '#17614a', grid: 'rgba(23,97,74,0.10)', bad: '#a63d2a', mid: '#8a5d0c' },
     dark: { bg: '#09191a', ink: '#e9f3ef', ink2: '#9db6ae', brand: '#5fcaa0', grid: 'rgba(95,202,160,0.09)', bad: '#ff8d78', mid: '#e8b45a' },
-    forest: { bg: '#0d3b2f', ink: '#e9f5ef', ink2: '#a9cdbf', brand: '#8fe0b5', grid: 'rgba(233,245,239,0.08)', bad: '#ffb09c', mid: '#f0c878' },
+    // The two new themes use all three HealthBridge topic colours (brain blue, heart red, head amber) as glows and a top bar
+    tricolour: { bg: '#0a1c24', ink: '#eef4f2', ink2: '#a3bbb6', brand: '#5fcaa0', grid: 'rgba(95,202,160,0.08)', bad: '#ff8d78', mid: '#e8b45a', glow: ['#3d86b5', '#d0453f', '#d9a441'], glowA: 0.30 },
+    midnight: { bg: '#0b1330', ink: '#eef1fb', ink2: '#a9b4d6', brand: '#7fb2ff', grid: 'rgba(127,178,255,0.08)', bad: '#ff8d78', mid: '#e8b45a', glow: ['#3d86b5', '#d0453f', '#d9a441'], glowA: 0.30 },
   }
   var POST = { w: 1080, h: 1350, top: 0, bottom: 160 } // bottom 160 keeps the footer inside a centred square crop (Instagram crops 1350 high slides to 1080 high: it cuts 135 px off the top and bottom)
   var STORY = { w: 1080, h: 1920, top: 250, bottom: 340 } // Instagram covers the top and bottom of a story with its own buttons
@@ -424,6 +425,21 @@
     if (fill) { ctx.fillStyle = fill; ctx.fill() }
     if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 3; ctx.stroke() }
   }
+  // Lucide outline icons (ISC licence, see assets/library-open/LICENSE.txt), 24 x 24 grid; drawn with art 'icons'
+  var LUCIDE = {"activity":"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2","bed":"M2 4v16 M2 8h18a2 2 0 0 1 2 2v10 M2 17h20 M6 8v9","bone":"M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z","book-open":"M12 5v16 M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z","brain-circuit":"M12 13h4 M12 18h6a2 2 0 012 2v1 M12 8h8 M12 9a4.17 4.17 0 01-3 4 M16 8V5a2 2 0 012-2 M6 18a4 4 0 01-2-7.465 M6.004 5.125a4 4 0 00-2.526 5.77 M6.294 6.294A3 3 0 1112 5v13a4 4 0 11-7.967-.518 M15.5 13.0a0.5 0.5 0 1 0 1.0 0a0.5 0.5 0 1 0 -1.0 0 M17.5 3.0a0.5 0.5 0 1 0 1.0 0a0.5 0.5 0 1 0 -1.0 0 M19.5 21.0a0.5 0.5 0 1 0 1.0 0a0.5 0.5 0 1 0 -1.0 0 M19.5 8.0a0.5 0.5 0 1 0 1.0 0a0.5 0.5 0 1 0 -1.0 0","brain-cog":"M0 0m10.852 14.772-.383.923 M0 0m10.852 9.228-.383-.923 M0 0m13.148 14.772.382.924 M0 0m13.53 8.305-.382.923 M0 0m14.772 10.852.923-.383 M0 0m14.772 13.148.923.383 M17.997 5.125a4 4 0 012.526 5.77 M18 18a4 4 0 002-7.464 M4.033 17.483A4 4 0 0011.46 20c.184-.31.896-.31 1.076 0a4 4 0 007.43-2.517 M6 18a4 4 0 01-2-7.464 M6.002 5.125a4 4 0 00-2.525 5.77 M6.293 6.294a3 3 0 01-.287-1.098l-.004-.07a3 3 0 015.968-.543c.05.02.057.01.059 0a3 3 0 015.968.542l-.004.071a3 3 0 01-.287 1.098 M0 0m9.228 10.852-.923-.383 M0 0m9.228 13.148-.923.383 M9.0 12.0a3.0 3.0 0 1 0 6.0 0a3.0 3.0 0 1 0 -6.0 0","brain":"M12 18V5 M15 13a4.17 4.17 0 01-3-4 4.17 4.17 0 01-3 4 M17.707 6.294A3 3 0 1012 5a3 3 0 10-5.707 1.294 M17.996 5.125a4 4 0 012.526 5.77 M18 18a4 4 0 002-7.465 M19.967 17.482a4 4 0 11-7.967.517 4 4 0 11-7.967-.517 M6 18a4 4 0 01-2-7.465 M6.004 5.125a4 4 0 00-2.526 5.77","clipboard-list":"M9.0 2.0h6.0a1.0 1.0 0 0 1 1.0 1.0v2.0a1.0 1.0 0 0 1 -1.0 1.0h-6.0a1.0 1.0 0 0 1 -1.0 -1.0v-2.0a1.0 1.0 0 0 1 1.0 -1.0z M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2 M12 11h4 M12 16h4 M8 11h.01 M8 16h.01","dna":"M0 0m10 16 1.5 1.5 M0 0m14 8-1.5-1.5 M15 2c-1.798 1.998-2.518 3.995-2.807 5.993 M0 0m16.5 10.5 1 1 M0 0m17 6-2.891-2.891 M2 15c6.667-6 13.333 0 20-6 M0 0m20 9 .891.891 M3.109 14.109 4 15 M0 0m6.5 12.5 1 1 M0 0m7 18 2.891 2.891 M9 22c1.798-1.998 2.518-3.995 2.807-5.993","droplet":"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z","ear":"M6 8.5a6.5 6.5 0 1 1 13 0c0 6-6 6-6 10a3.5 3.5 0 1 1-7 0 M15 8.5a2.5 2.5 0 0 0-5 0v1a2 2 0 1 1 0 4","eye":"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0 M9.0 12.0a3.0 3.0 0 1 0 6.0 0a3.0 3.0 0 1 0 -6.0 0","flask-conical":"M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2 M6.453 15h11.094 M8.5 2h7","footprints":"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z M16 17h4 M4 13h4","graduation-cap":"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z M22 10v6 M6 12.5V16a6 3 0 0 0 12 0v-3.5","heart-pulse":"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5 M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27","heart":"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5","hospital":"M12 7v4 M14 21v-3a2 2 0 0 0-4 0v3 M14 9h-4 M18 11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2 M18 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16","lightbulb":"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5 M9 18h6 M10 22h4","message-circle":"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719","mic":"M12 19v3 M19 10v2a7 7 0 0 1-14 0v-2 M12.0 2.0h0.0a3.0 3.0 0 0 1 3.0 3.0v7.0a3.0 3.0 0 0 1 -3.0 3.0h-0.0a3.0 3.0 0 0 1 -3.0 -3.0v-7.0a3.0 3.0 0 0 1 3.0 -3.0z","microscope":"M6 18h8 M3 22h18 M14 22a7 7 0 1 0 0-14h-1 M9 14h2 M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3","moon":"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401","pill":"M0 0m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z M0 0m8.5 8.5 7 7","play":"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z","quote":"M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z","scale":"M12 3v18 M0 0m19 8 3 8a5 5 0 0 1-6 0zV7 M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1 M0 0m5 8 3 8a5 5 0 0 1-6 0zV7 M7 21h10","search":"M0 0m21 21-4.34-4.34 M3.0 11.0a8.0 8.0 0 1 0 16.0 0a8.0 8.0 0 1 0 -16.0 0","shield-check":"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z M0 0m9 12 2 2 4-4","stethoscope":"M11 2v2 M5 2v2 M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1 M8 15a6 6 0 0 0 12 0v-3 M18.0 10.0a2.0 2.0 0 1 0 4.0 0a2.0 2.0 0 1 0 -4.0 0","syringe":"M0 0m18 2 4 4 M0 0m17 7 3-3 M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5 M0 0m9 11 4 4 M0 0m5 19-3 3 M0 0m14 4 6 6","thermometer":"M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z","users":"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M16 3.128a4 4 0 0 1 0 7.744 M22 21v-2a4 4 0 0 0-3-3.87 M5.0 7.0a4.0 4.0 0 1 0 8.0 0a4.0 4.0 0 1 0 -8.0 0","video":"M0 0m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5 M4.0 6.0h10.0a2.0 2.0 0 0 1 2.0 2.0v8.0a2.0 2.0 0 0 1 -2.0 2.0h-10.0a2.0 2.0 0 0 1 -2.0 -2.0v-8.0a2.0 2.0 0 0 1 2.0 -2.0z"}
+  // Colour by topic: blue for brain and senses, red for heart and blood, amber for mind and people, neutral otherwise
+  var ICON_TOPIC = { Neurology: 'brain brain-circuit brain-cog eye ear moon bed', Cardiology: 'heart heart-pulse activity stethoscope droplet thermometer', Psychology: 'lightbulb message-circle users footprints scale search quote' }
+  function iconColour(name) {
+    for (var tp in ICON_TOPIC) if (ICON_TOPIC[tp].split(' ').indexOf(name) >= 0) return TOPIC[tp].c
+    return TOPIC.Neurology.c
+  }
+  var LUCIDE_P = {}
+  function lucideIcon(ctx, name, x, y, size, colour) {
+    var d = LUCIDE[name]; if (!d) return
+    var p = LUCIDE_P[name] || (LUCIDE_P[name] = new Path2D(d))
+    ctx.save(); ctx.translate(x, y); ctx.scale(size / 24, size / 24)
+    ctx.strokeStyle = colour; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke(p); ctx.restore()
+  }
   // Small drawn pictures of the website, one per feature slide. Everything inside is drawn here, nothing is a photo.
   function drawArt(ctx, t, art, x, y, w, h, accent) {
     ctx.save()
@@ -447,18 +463,19 @@
       ctx.save(); ctx.translate(cxl + cw - 128, y + 150); ctx.rotate(-0.12)
       ctx.strokeStyle = t.bad; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(0, 0, 78, 0, 6.2832); ctx.stroke()
       ctx.lineWidth = 15; ctx.beginPath(); ctx.moveTo(-32, -32); ctx.lineTo(32, 32); ctx.moveTo(32, -32); ctx.lineTo(-32, 32); ctx.stroke(); ctx.restore()
-      ctx.fillStyle = t.ink2; ctx.font = '500 30px ' + SANS; ctx.fillText('Checked against two real sources', cxl + 36, y + h - 92)
+      ctx.fillStyle = curSoon ? accent : t.ink2; ctx.font = (curSoon ? '700 ' : '500 ') + '30px ' + SANS; ctx.fillText(curSoon ? 'COMING SOON' : 'Checked against two real sources', cxl + 36, y + h - 92)
       pill(ctx, cxl + cw - 210, y + h - 120, 174, 56, null, t.bad, 3); ctx.fillStyle = t.bad; ctx.font = '700 28px ' + SANS; ctx.textAlign = 'center'; ctx.fillText('MYTH', cxl + cw - 123, y + h - 92)
     } else if (art === 'quiz') {
       ctx.fillStyle = t.ink; ctx.font = '400 38px ' + SERIF; ctx.textAlign = 'left'
-      wrap(ctx, 'Which type of brain cell is primarily responsible for transmitting electrical signals?', w - 96).forEach(function (l, i) { ctx.fillText(l, x + 48, y + 56 + i * 46) })
-      var opts = ['Astrocyte', 'Microglia', 'Neuron'], oy = y + 168
+      wrap(ctx, 'Which type of brain cell is primarily responsible for transmitting electrical signals?', w - 96).forEach(function (l, i) { ctx.fillText(l, x + 48, y + 38 + i * 44) })
+      // the same 4 options as the website quiz (js/data.js)
+      var opts = ['Astrocyte', 'Microglia', 'Neuron', 'Oligodendrocyte'], oy = y + 136
       opts.forEach(function (o, i) {
-        var right = i === 2, py = oy + i * 82
-        pill(ctx, x + 48, py, w - 96, 68, right ? accent : hexA(t.ink, 0.07), right ? null : hexA(t.ink, 0.25), 2)
-        ctx.fillStyle = right ? t.bg : t.ink2; ctx.font = '700 30px ' + SANS; ctx.textAlign = 'left'; ctx.fillText('ABC'[i], x + 80, py + 35)
-        ctx.font = '600 34px ' + SANS; ctx.fillText(o, x + 136, py + 35)
-        if (right) { ctx.font = '700 28px ' + SANS; ctx.textAlign = 'right'; ctx.fillText('Correct', x + w - 80, py + 35) }
+        var right = i === 2, py = oy + i * 68
+        pill(ctx, x + 48, py, w - 96, 58, right ? accent : hexA(t.ink, 0.07), right ? null : hexA(t.ink, 0.25), 2)
+        ctx.fillStyle = right ? t.bg : t.ink2; ctx.font = '700 30px ' + SANS; ctx.textAlign = 'left'; ctx.fillText('ABCD'[i], x + 80, py + 30)
+        ctx.font = '600 32px ' + SANS; ctx.fillText(o, x + 136, py + 30)
+        if (right) { ctx.font = '700 28px ' + SANS; ctx.textAlign = 'right'; ctx.fillText('Correct', x + w - 80, py + 30) }
       })
     } else if (art === 'glossary') {
       var terms = [['fMRI', 'A brain scan that shows which parts are more active', TOPIC.Neurology.c], ['Heart rate and pulse', 'How many times your heart beats per minute', TOPIC.Cardiology.c], ['Growth mindset', 'Believing your abilities can be developed', TOPIC.Psychology.c]]
@@ -506,6 +523,11 @@
       })
       ctx.fillStyle = hexA(t.ink, 0.3); rr(ctx, x + 36, y + h - 56, w - 72, 14, 7); ctx.fill()
       ctx.fillStyle = hexA(t.ink, 0.18); rr(ctx, x + 36, y + h - 30, (w - 72) * 0.6, 14, 7); ctx.fill()
+    } else if (art === 'icons') {
+      // 1 to 3 big library icons in the slide's topic colour (names come from the [icons:a,b,c] tag)
+      var names = (curIcons || []).slice(0, 3), n = names.length || 1
+      var isz = n === 1 ? 300 : n === 2 ? 240 : 190, igap = (w - n * isz) / (n + 1)
+      names.forEach(function (nm, k) { lucideIcon(ctx, nm, x + igap + k * (isz + igap), cy - isz / 2, isz, accent) })
     } else if (art === 'stats') {
       // four numbers from the homepage "Vital signs"
       var st4 = [['20%', 'of your body’s energy goes to your brain', TOPIC.Neurology.c], ['100,000', 'heartbeats a day', TOPIC.Cardiology.c], ['86 billion', 'neurons in your brain', TOPIC.Neurology.c], ['20,000', 'breaths a day, without thinking', TOPIC.Psychology.c]]
@@ -529,12 +551,21 @@
   function background(ctx, t) {
     var W = DIM.w, H = DIM.h
     ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H)
+    if (t.glow) { // three soft glows (blue, red, amber) and a three-colour bar under the footer, inside the square crop (Instagram cuts the top 135 and bottom 135 px)
+      var gp = [[0.05, 0.10], [0.98, 0.42], [0.10, 0.78]]
+      t.glow.forEach(function (c, i) {
+        var g = ctx.createRadialGradient(W * gp[i][0], H * gp[i][1], 0, W * gp[i][0], H * gp[i][1], W * 0.75)
+        g.addColorStop(0, hexA(c, t.glowA)); g.addColorStop(1, hexA(c, 0))
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H)
+      })
+    }
     ctx.strokeStyle = t.grid; ctx.lineWidth = 1.5
     for (var x = 0; x <= W; x += 54) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() }
     for (var y = 0; y <= H; y += 54) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() }
     var fade = ctx.createLinearGradient(0, H * 0.3, 0, H * 0.85) // the graph paper fades out towards the bottom
     fade.addColorStop(0, hexA(t.bg, 0)); fade.addColorStop(1, hexA(t.bg, 1))
     ctx.fillStyle = fade; ctx.fillRect(0, 0, W, H)
+    // (his order 26 Nov: the three-colour bar under the footer is removed; the three dots in the footer are enough)
   }
   function brandRow(ctx, t, n, total) {
     var y = DIM.h - DIM.bottom - 68
@@ -548,6 +579,8 @@
     ctx.textAlign = 'left'
   }
   // a label's colour: the topic's colour if the label names one of the three topics, otherwise the brand green
+  var curIcons = [] // icon names for an 'icons' picture slide
+  var curSoon = false // true when the slide being drawn says the feature is coming soon
   var curAccent = null // the topic colour of the slide being drawn (MythBuster sets it on every slide)
   function labelColour(t, label) { var k = ['Neurology', 'Cardiology', 'Psychology'].filter(function (x) { return String(label || '').indexOf(x) >= 0 })[0]; return k ? TOPIC[k].c : (curAccent || t.brand) }
   // A hint of the topic colour on every slide: a soft glow from the top edge and a thin strip along it
@@ -567,7 +600,7 @@
   /* ----- One slide, by kind ----- */
   function draw(canvas, s, n, total, d) {
     canvas.width = DIM.w; canvas.height = DIM.h
-    var ctx = canvas.getContext('2d'), t = THEMES[d.theme] || THEMES.light, W = DIM.w
+    var ctx = canvas.getContext('2d'), t = THEMES[d.theme] || THEMES.dark, W = DIM.w
     background(ctx, t); ctx.textAlign = 'left'
     curAccent = s.accent || null
     if (curAccent) accentHint(ctx, curAccent)
@@ -581,7 +614,7 @@
       fits = r.fits
       if (s.by) { ctx.fillStyle = t.ink2; ctx.font = '500 38px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText(s.by, PAD, Math.min(r.bottom + 40, topicCover ? 720 : 880)) }
       if (topicCover) topicIcon(ctx, s.deco.slice(6), 700, 300)
-      else if (s.deco === 'topics') threeTopics(ctx, 840, 190)
+      else if (s.deco === 'topics') { threeTopics(ctx, 800, 230); ctx.fillStyle = t.ink2; ctx.font = '600 34px ' + SANS; ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('Swipe  →', W - PAD, 1044); ctx.textAlign = 'left' }
       else deco(ctx, t, s.deco, 900, s.text)
     } else if (s.kind === 'text') {
       labelRule(ctx, t, s.label)
@@ -614,6 +647,8 @@
     } else if (s.kind === 'feature') {
       // A feature slide: a big name, a drawn picture of that part of the website, then one short line
       labelRule(ctx, t, s.label)
+      if (s.num) { ctx.fillStyle = s.accent || t.brand; ctx.font = '700 40px ' + SANS; ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText((s.num < 10 ? '0' : '') + s.num, W - PAD, 160); ctx.textAlign = 'left' }
+      curSoon = !!s.soon; curIcons = s.icons || []
       var fh = paragraph(ctx, s.head, PAD, 250, { w: inner.w, h: 120, max: 96, min: 64, weight: '400', family: SERIF, lh: 1.05 }, t.ink)
       drawArt(ctx, t, s.art, PAD, 410, inner.w, 430, s.accent || t.brand)
       var fb = paragraph(ctx, s.text, PAD, 880, { w: inner.w, h: 190, max: 52, min: 36, weight: '400', family: SERIF, lh: 1.28 }, t.ink)
@@ -682,9 +717,10 @@
       ctx.fillStyle = t.brand; ctx.font = '600 44px ' + SANS; ctx.textBaseline = 'top'
       var link = s.link, px = 44
       while (ctx.measureText(link).width > inner.w && px > 24) { px -= 2; ctx.font = '600 ' + px + 'px ' + SANS }
-      ctx.fillText(link, PAD, Math.max(c.bottom + 50, 700))
-      ctx.fillStyle = t.ink2; ctx.font = '500 34px ' + SANS
-      ctx.fillText('Join us on Substack, Instagram and LinkedIn', PAD, Math.max(c.bottom + 130, 780))
+      var ly = Math.max(c.bottom + 30, 640), lw = Math.min(ctx.measureText(link).width + 90, inner.w)
+      pill(ctx, PAD, ly, lw, 88, t.brand, null); ctx.fillStyle = t.bg; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(link, PAD + 45, ly + 46)
+      ctx.fillStyle = t.ink2; ctx.font = '500 34px ' + SANS; ctx.textBaseline = 'top'
+      ctx.fillText('Join us on Substack, Instagram and LinkedIn', PAD, ly + 116)
       deco(ctx, t, s.deco, 900, s.heading.join(' '))
     } else if (s.kind === 'qs' || s.kind === 'qa') {
       fits = drawQuiz(ctx, t, s, d)
@@ -803,16 +839,20 @@
       if (body.length > MAX_BODY) notes.push('Instagram allows 10 slides, so only the first ' + MAX_BODY + ' of your ' + body.length + ' are used. Cut or merge some.')
       longWords(body, 2, notes)
       body = body.slice(0, MAX_BODY)
-      var out = [{ kind: 'cover', label: 'HealthBridge news', text: v.title || 'Your headline goes here', by: 'By ' + (v.author2 || v.author || 'HealthBridge'), deco: 'trace' }]
+      var out = [{ kind: 'cover', label: 'HealthBridge news', text: v.title || 'Your headline goes here', by: '', deco: 'trace' }]
       // A slide written as "Name: what it does" gets the name as a big phrase and a topic-colour hint (blue, red, amber in turn)
       var accents = [TOPIC.Neurology.c, TOPIC.Cardiology.c, TOPIC.Psychology.c]
       // "[models] 3D models: text" (also myth, quiz, glossary, check, articles) makes a picture slide, and the cover gets the three topic symbols
-      var withArt = body.some(function (s) { return /^\[(models|myth|quiz|glossary|check|articles|stats|reading)\]/.test(s) })
+      var withArt = body.some(function (s) { return /^\[(models|myth|quiz|glossary|check|articles|stats|reading|icons:[a-z0-9,-]+)\]/.test(s) })
       if (withArt) out[0].deco = 'topics'
+      var featN = 0
+      var ARTTOPIC = { reading: 'Psychology', models: 'Neurology', myth: 'Cardiology', quiz: 'Neurology', glossary: 'Psychology', check: 'Cardiology', articles: 'Neurology' } // each picture slide gets a topic colour that fits it
       body.forEach(function (s, i) {
-        var ma = /^\[(models|myth|quiz|glossary|check|articles|stats|reading)\]\s*([^:]{2,28}):\s*([\s\S]+)$/.exec(s)
+        var ma = /^\[(models|myth|quiz|glossary|check|articles|stats|reading|icons:[a-z0-9,-]+)\]\s*([^:]{2,28}):\s*([\s\S]+)$/.exec(s)
+        var icn = ma && /^icons:/.test(ma[1]) ? ma[1].slice(6).split(',').filter(function (q) { return LUCIDE[q] }) : null
+        if (icn) ma[1] = 'icons'
         var m = /^([^:.]{2,28}):\s*([\s\S]+)$/.exec(s)
-        if (ma) out.push({ kind: 'feature', label: 'On our website', art: ma[1], head: ma[2].trim(), text: ma[3].trim().charAt(0).toUpperCase() + ma[3].trim().slice(1), accent: accents[i % 3] })
+        if (ma) { featN++; out.push({ kind: 'feature', label: icn ? 'HealthBridge news' : 'On our website', art: ma[1], icons: icn, head: ma[2].trim(), text: ma[3].trim().charAt(0).toUpperCase() + ma[3].trim().slice(1), accent: (icn && icn.length ? iconColour(icn[0]) : ARTTOPIC[ma[1]] ? TOPIC[ARTTOPIC[ma[1]]].c : accents[i % 3]), num: featN, soon: /coming soon/i.test(ma[3]) }) }
         else if (m) out.push({ kind: 'evidence', label: 'HealthBridge news', head: m[1].trim(), text: m[2].trim().charAt(0).toUpperCase() + m[2].trim().slice(1), accent: accents[i % 3] })
         else out.push({ kind: 'text', label: 'HealthBridge news', text: s })
       })
@@ -876,7 +916,7 @@
 
   function currentType() { return (form.querySelector('input[name=type]:checked') || {}).value || 'article' }
   function read(type) {
-    var v = { theme: (form.querySelector('input[name=theme]:checked') || {}).value || 'light' }
+    var v = { theme: (form.querySelector('input[name=theme]:checked') || {}).value || 'dark' }
     TYPES[type].fields.forEach(function (f) { var c = $(id(type, f.name)); v[f.name] = c ? (f.kind === 'select' ? c.value : c.value.trim()) : '' })
     v.link = v.link || ''
     return v
