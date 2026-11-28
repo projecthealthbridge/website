@@ -252,7 +252,7 @@
   }
   var LETTERS = ['A', 'B', 'C', 'D']
   var MAX_Q = 5
-  var blankQ = function () { return { q: '', a: '', b: '', c: '', d: '', ans: 'A', why: '' } }
+  var blankQ = function () { return { q: '', a: '', b: '', c: '', d: '', ans: 'A', lab: 'Why', why: '' } }
   var quiz = [blankQ()]
 
   var $ = function (id) { return document.getElementById(id) }
@@ -324,7 +324,15 @@
       LETTERS.forEach(function (l) { add(opts, l.toLowerCase(), 'Option ' + l, 'text', 90) })
       b.appendChild(opts)
       add(b, 'ans', 'The correct answer', 'select')
-      add(b, 'why', 'Why (shown on the answer frame)', 'area', 300)
+      if (!q.lab) q.lab = 'Why'
+      var lrow = el('div'), lid = 'q' + i + '-lab'
+      lrow.appendChild(el('label', { for: lid }, 'Heading above the explanation'))
+      var ls = el('select', { id: lid, class: 'select' })
+      ;['Why', 'How it works', 'The idea', 'Example', 'Fun fact', 'Remember'].forEach(function (t) { ls.appendChild(el('option', { value: t }, t)) })
+      ls.value = q.lab
+      ls.addEventListener('input', function () { q.lab = ls.value })
+      lrow.appendChild(ls); b.appendChild(lrow)
+      add(b, 'why', 'Explanation (shown on the answer frame)', 'area', 300)
       list.appendChild(b)
     })
     $('qadd').disabled = quiz.length >= MAX_Q
@@ -785,6 +793,8 @@
       var oh = Math.min(150, Math.floor((avail - (n - 1) * gap) / n))
       if (oh < 60) fits = false
       var qsz = commonSize(opts.map(function (o) { return o.text }), inW - 130, Math.max(oh, 40) - 16, 46, 22)
+      // spread the boxes: use any spare height as extra space between them (up to 70 px), so a poll sticker placed over them lines up
+      if (n > 1) gap = Math.max(gap, Math.min(70, Math.floor((avail - n * Math.max(oh, 40)) / (n - 1))))
       opts.forEach(function (o) { box(o, Math.max(oh, 40), true, qsz) })
       // the site's heartbeat-to-brain-wave line, in the topic colour, above the logo
       ctx.save(); ctx.translate(PAD, brandY - 118); ctx.scale((DIM.w - 2 * PAD) / 1200, 0.9); ctx.strokeStyle = acc; ctx.lineWidth = 6 / 1.1; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.globalAlpha = 0.9; ctx.stroke(TRACE); ctx.restore()
@@ -792,7 +802,7 @@
       var wsz = commonSize(opts.filter(function (o) { return o.l !== s.ans }).map(function (o) { return o.text }), inW - 130, 74 - 16, 34, 20)
       opts.forEach(function (o) { box(o, o.l === s.ans ? 150 : 74, o.l === s.ans, o.l === s.ans ? 52 : wsz) })
       if (s.why) {
-        ctx.fillStyle = acc; ctx.font = '600 34px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText('WHY', PAD, y + 24)
+        ctx.fillStyle = acc; ctx.font = '600 34px ' + SANS; ctx.textBaseline = 'top'; ctx.fillText((s.lab || 'Why').toUpperCase(), PAD, y + 24)
         var w = paragraph(ctx, s.why, PAD, y + 80, { w: inW, h: limit - (y + 80), max: 56, min: 28, weight: '400', family: SERIF, lh: 1.25 }, t.ink)
         if (!w.fits) fits = false
       }
@@ -901,14 +911,14 @@
         if (!q.q.trim()) { notes.push('Question ' + n + ' has no question text.'); return }
         if (filled < 2) { notes.push('Question ' + n + ' needs at least two options.'); return }
         if (!opts[LETTERS.indexOf(q.ans)]) { notes.push('Question ' + n + ': the correct answer ' + q.ans + ' is empty. Pick an option that has text.'); return }
-        done.push({ q: q.q.trim(), opts: opts, ans: q.ans, why: q.why.trim() })
+        done.push({ q: q.q.trim(), opts: opts, ans: q.ans, lab: q.lab, why: q.why.trim() })
       })
       // With nothing written yet, show a sample so the format is visible (download stays off until a real question exists)
       var sample = !done.length
       if (sample) done = [{ q: 'Your question goes here', opts: ['First option', 'Second option', 'Third option', 'Fourth option'], ans: 'B', why: 'Why the answer is right goes here.' }]
       var out = []
       if (v.mode !== 'answers') done.forEach(function (q, i) { out.push({ kind: 'qs', i: i + 1, of: done.length, q: q.q, opts: q.opts }) })
-      if (v.mode !== 'questions') done.forEach(function (q, i) { out.push({ kind: 'qa', i: i + 1, of: done.length, q: q.q, opts: q.opts, ans: q.ans, why: q.why }) })
+      if (v.mode !== 'questions') done.forEach(function (q, i) { out.push({ kind: 'qa', i: i + 1, of: done.length, q: q.q, opts: q.opts, ans: q.ans, lab: q.lab, why: q.why }) })
       if (v.mode !== 'questions' && done.some(function (q) { return !q.why })) notes.push('Add a reason for each answer. The answer frame teaches more with a line on why.')
       return { slides: out, ready: !sample, name: v.series + ' ' + (done[0] ? done[0].q : ''), need: 'Finish one question (text, two options and the right answer) to download.', story: true }
     },
@@ -1041,6 +1051,7 @@
    account can save changes, so this page never holds a password or a token. */
 (function () {
   'use strict'
+  var MEMBERS = window.HB_MEMBERS && window.HB_MEMBERS.length ? window.HB_MEMBERS : ['HealthBridge'] // data/members.js
   var EDIT = 'https://github.com/projecthealthbridge/website/edit/main/'
   var $ = function (id) { return document.getElementById(id) }
   var form = $('form'), wforms = $('wforms'), wtypes = $('wtypes')

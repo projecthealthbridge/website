@@ -232,7 +232,8 @@
         return wrap
       }
       var uniq = function (key) { return entries.map(function (w) { return w[key] }).filter(function (v, i, arr) { return v && arr.indexOf(v) === i }) }
-      var filters = el('div', { class: 'filters' }, [group('Verdict', 'verdict', uniq('verdict'))])
+      var filters = el('div', { class: 'filters' })
+      if (uniq('verdict').length > 1) filters.appendChild(group('Verdict', 'verdict', uniq('verdict')))
       var TOPICS = ['Neurology', 'Cardiology', 'Psychology']
       uniq('topic').forEach(function (t) { if (TOPICS.indexOf(t) < 0) TOPICS.push(t) })
       filters.appendChild(group('Topic', 'topic', TOPICS))
