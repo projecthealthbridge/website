@@ -375,6 +375,7 @@ textarea { min-height: 9rem; resize: vertical; }
 .coming h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); max-width: 22ch; }
 .coming p { color: var(--ink-2); }
 .coming .status { margin: 0 0 1.2rem; }
+.status.live { color: var(--brand); background: transparent; border: 1px solid var(--brand); }
 .weekly { border-top: 2px solid var(--ink); padding: 1.8rem 0 2rem; max-width: 46rem; }
 .weekly time { color: var(--ink-2); font-size: 0.93rem; }
 .weekly h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); margin: 0.4rem 0 0.8rem; }

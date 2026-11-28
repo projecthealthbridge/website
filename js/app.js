@@ -233,7 +233,9 @@
       }
       var uniq = function (key) { return entries.map(function (w) { return w[key] }).filter(function (v, i, arr) { return v && arr.indexOf(v) === i }) }
       var filters = el('div', { class: 'filters' }, [group('Verdict', 'verdict', uniq('verdict'))])
-      if (uniq('topic').length > 1) filters.appendChild(group('Topic', 'topic', uniq('topic')))
+      var TOPICS = ['Neurology', 'Cardiology', 'Psychology']
+      uniq('topic').forEach(function (t) { if (TOPICS.indexOf(t) < 0) TOPICS.push(t) })
+      filters.appendChild(group('Topic', 'topic', TOPICS))
       box.appendChild(filters)
       box.appendChild(none)
     }
@@ -372,6 +374,7 @@
       var live = el('p', { class: 'note', role: 'status', 'aria-live': 'polite' })
       var next = el('button', { type: 'button', class: 'btn btn-primary', text: index === questions.length - 1 ? 'See my score' : 'Next question', hidden: '' })
       var options = el('div', { class: 'options' })
+      var explainBox = el('p', { class: 'note', hidden: '' })
       q.options.forEach(function (text, i) {
         var b = el('button', { type: 'button', class: 'option', style: '--i:' + i }, [el('span', { text: text })])
         b.addEventListener('click', function () {
@@ -382,6 +385,7 @@
             else if (j === i) { o.classList.add('wrong'); o.appendChild(el('span', { class: 'small', text: 'Your answer' })) }
           })
           live.textContent = i === q.answer ? 'Correct.' : 'Not quite. The right answer is ' + q.options[q.answer] + '.'
+          if (q.explain && q.explain.text) { explainBox.textContent = ''; explainBox.appendChild(el('strong', { text: (q.explain.label || 'Why') + ': ' })); explainBox.appendChild(document.createTextNode(q.explain.text)); explainBox.hidden = false }
           next.hidden = false
           next.focus()
         })
@@ -393,6 +397,7 @@
       quiz.appendChild(el('h2', { text: q.q }))
       quiz.appendChild(options)
       quiz.appendChild(live)
+      quiz.appendChild(explainBox)
       quiz.appendChild(next)
     }
 
